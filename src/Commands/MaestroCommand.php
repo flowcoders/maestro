@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Flowcoders\Maestro\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class MaestroCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'maestro';
 
     public $description = 'My command';
 
