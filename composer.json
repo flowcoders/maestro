@@ -1,17 +1,19 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "flowcoders/maestro",
+    "description": "Flowcoders Maestro",
     "keywords": [
-        ":vendor_name",
+        "flowcoders",
         "laravel",
-        ":package_slug"
+        "maestro",
+        "payment",
+        "gateway"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/flowcoders/maestro",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Paulo Guerra",
+            "email": "paulovictorguerra@gmail.com",
             "role": "Developer"
         }
     ],
@@ -35,13 +37,13 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "Flowcoders\\Maestro\\": "src/",
+            "Flowcoders\\Maestro\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/",
+            "Flowcoders\\Maestro\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -63,10 +65,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "Flowcoders\\Maestro\\MaestroServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "Maestro": "Flowcoders\\Maestro\\Facades\\Maestro"
             }
         }
     },
