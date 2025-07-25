@@ -2,4 +2,6 @@
 
 namespace Flowcoders\Maestro;
 
-class Maestro {}
+class Maestro
+{
+}
