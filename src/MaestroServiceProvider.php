@@ -2,9 +2,9 @@
 
 namespace Flowcoders\Maestro;
 
+use Flowcoders\Maestro\Commands\MaestroCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Flowcoders\Maestro\Commands\MaestroCommand;
 
 class MaestroServiceProvider extends PackageServiceProvider
 {

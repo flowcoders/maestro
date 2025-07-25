@@ -2,9 +2,9 @@
 
 namespace Flowcoders\Maestro\Tests;
 
+use Flowcoders\Maestro\MaestroServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Flowcoders\Maestro\MaestroServiceProvider;
 
 class TestCase extends Orchestra
 {
