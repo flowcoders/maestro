@@ -52,8 +52,8 @@ php artisan vendor:publish --tag=":package_slug-views"
 ## Usage
 
 ```php
-$variable = new VendorName\Skeleton();
-echo $variable->echoPhrase('Hello, VendorName!');
+$variable = new Flowcoders\Maestro();
+echo $variable->echoPhrase('Hello, Flowcoders!');
 ```
 
 ## Testing
