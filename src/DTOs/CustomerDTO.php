@@ -40,9 +40,4 @@ readonly class CustomerDTO
             address: $address,
         );
     }
-
-    public function getFullName(): string
-    {
-        return trim("{$this->firstName} {$this->lastName}");
-    }
 }

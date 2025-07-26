@@ -5,35 +5,65 @@ declare(strict_types=1);
 namespace Flowcoders\Maestro\ValueObjects\PaymentMethod;
 
 use Flowcoders\Maestro\Contracts\ValueObjects\PaymentMethodInterface;
+use Flowcoders\Maestro\Enums\CardBrand;
 use Flowcoders\Maestro\Enums\PaymentMethod;
+use Illuminate\Contracts\Support\Arrayable;
 use InvalidArgumentException;
 
-readonly class CreditCard implements PaymentMethodInterface
+readonly class CreditCard implements Arrayable, PaymentMethodInterface
 {
     public function __construct(
-        public string $token,
-        public string $holderName,
-        public int $expirationMonth,
-        public int $expirationYear,
-        public string $brand,
+        public ?string $token = null,
+        public ?string $bin = null,
+        public ?string $holderName = null,
+        public ?int $expirationMonth = null,
+        public ?int $expirationYear = null,
+        public ?CardBrand $brand = null,
         public ?string $lastFourDigits = null,
     ) {
         $this->validateToken($token);
         $this->validateHolderName($holderName);
         $this->validateExpirationMonth($expirationMonth);
         $this->validateExpirationYear($expirationYear);
-        $this->validateBrand($brand);
     }
 
-    private function validateToken(string $token): void
+    public static function create(
+        ?string $token = null,
+        ?string $bin = null,
+        ?string $holderName = null,
+        ?int $expirationMonth = null,
+        ?int $expirationYear = null,
+        ?CardBrand $brand = null,
+        ?string $lastFourDigits = null,
+    ): self {
+        return new self(
+            token: $token,
+            bin: $bin,
+            holderName: $holderName,
+            expirationMonth: $expirationMonth,
+            expirationYear: $expirationYear,
+            brand: $brand,
+            lastFourDigits: $lastFourDigits,
+        );
+    }
+
+    private function validateToken(?string $token): void
     {
+        if (is_null($token)) {
+            return;
+        }
+
         if (empty(trim($token))) {
             throw new InvalidArgumentException('Credit card token cannot be empty');
         }
     }
 
-    private function validateHolderName(string $holderName): void
+    private function validateHolderName(?string $holderName): void
     {
+        if (is_null($holderName)) {
+            return;
+        }
+
         if (empty(trim($holderName))) {
             throw new InvalidArgumentException('Credit card holder name cannot be empty');
         }
@@ -43,15 +73,23 @@ readonly class CreditCard implements PaymentMethodInterface
         }
     }
 
-    private function validateExpirationMonth(int $month): void
+    private function validateExpirationMonth(?int $month): void
     {
+        if (is_null($month)) {
+            return;
+        }
+
         if ($month < 1 || $month > 12) {
             throw new InvalidArgumentException("Invalid expiration month: {$month}. Must be between 1 and 12");
         }
     }
 
-    private function validateExpirationYear(int $year): void
+    private function validateExpirationYear(?int $year): void
     {
+        if (is_null($year)) {
+            return;
+        }
+
         $currentYear = (int) date('Y');
         
         if ($year < $currentYear) {
@@ -63,16 +101,6 @@ readonly class CreditCard implements PaymentMethodInterface
         }
     }
 
-    private function validateBrand(string $brand): void
-    {
-        $validBrands = ['visa', 'mastercard', 'amex', 'elo', 'hipercard', 'diners'];
-        $normalizedBrand = strtolower($brand);
-        
-        if (! in_array($normalizedBrand, $validBrands, true)) {
-            throw new InvalidArgumentException("Invalid credit card brand: {$brand}");
-        }
-    }
-
     public function getType(): string
     {
         return PaymentMethod::CREDIT_CARD->value;
@@ -80,7 +108,7 @@ readonly class CreditCard implements PaymentMethodInterface
 
     public function isDocumentRequired(): bool
     {
-        return false; // Credit cards typically don't require document
+        return false;
     }
 
     public function isExpired(): bool
@@ -104,10 +132,11 @@ readonly class CreditCard implements PaymentMethodInterface
         return [
             'type' => $this->getType(),
             'token' => $this->token,
+            'bin' => $this->bin,
             'holder_name' => $this->holderName,
             'expiration_month' => $this->expirationMonth,
             'expiration_year' => $this->expirationYear,
-            'brand' => strtolower($this->brand),
+            'brand' => $this->brand?->value,
             'last_four_digits' => $this->lastFourDigits,
         ];
     }

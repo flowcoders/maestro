@@ -5,35 +5,35 @@ declare(strict_types=1);
 namespace Flowcoders\Maestro\Mappers;
 
 use Flowcoders\Maestro\Contracts\PaymentMapperInterface;
-use Flowcoders\Maestro\DTOs\AddressDTO;
-use Flowcoders\Maestro\DTOs\CreatePaymentDTO;
-use Flowcoders\Maestro\DTOs\CustomerDTO;
 use Flowcoders\Maestro\DTOs\PaymentResponseDTO;
 use Flowcoders\Maestro\DTOs\RefundPaymentDTO;
 use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\PaymentStatus;
 use DateTimeImmutable;
+use Flowcoders\Maestro\Contracts\ValueObjects\PaymentMethodInterface;
+use Flowcoders\Maestro\Enums\PaymentMethod;
+use Flowcoders\Maestro\ValueObjects\Address;
+use Flowcoders\Maestro\ValueObjects\Customer;
+use Flowcoders\Maestro\ValueObjects\Payment;
 
 class MercadoPagoPaymentMapper implements PaymentMapperInterface
 {
-    public function mapCreatePaymentRequest(CreatePaymentDTO $dto): array
+    public function mapCreatePaymentRequest(Payment $payment): array
     {
         $data = [
-            'transaction_amount' => $dto->amount / 100, // Convert cents to decimal
-            'description' => $dto->description,
-            'installments' => $dto->installments,
-            'payment_method_id' => $dto->paymentMethod,
-            'external_reference' => $dto->externalReference,
-            'notification_url' => $dto->notificationUrl,
-            'callback_url' => $dto->callbackUrl,
+            'transaction_amount' => $payment->amount / 100, // Convert cents to decimal
+            'description' => $payment->description,
+            'installments' => $payment->installments,
+            'payment_method_id' => $this->mapPaymentMethod($payment->paymentMethod), // TODO: MercadoPago uses some brands as payment_method_id
+            'external_reference' => $payment->externalReference,
+            'notification_url' => $payment->notificationUrl,
+            'callback_url' => $payment->callbackUrl,
         ];
 
-        if ($dto->customer !== null) {
-            $data['payer'] = $this->mapCustomer($dto->customer);
-        }
+        $data['payer'] = $this->mapCustomer($payment->customer);
 
-        if ($dto->metadata !== null) {
-            $data['metadata'] = $dto->metadata;
+        if ($payment->metadata !== null) {
+            $data['metadata'] = $payment->metadata;
         }
 
         return array_filter($data, fn ($value) => $value !== null);
@@ -84,7 +84,7 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
         );
     }
 
-    private function mapCustomer(CustomerDTO $customer): array
+    private function mapCustomer(Customer $customer): array
     {
         $data = [
             'id' => $customer->id,
@@ -107,57 +107,43 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
         return array_filter($data, fn ($value) => $value !== null);
     }
 
-    private function mapAddress(AddressDTO $address): array
+    private function mapAddress(Address $address): array
     {
         return array_filter([
+            'zip_code' => $address->postalCode,
             'street_name' => $address->streetName,
             'street_number' => $address->streetNumber,
-            'zip_code' => $address->postalCode,
             'city' => $address->city,
             'federal_unit' => $address->state,
             'neighborhood' => $address->neighborhood,
         ], fn ($value) => $value !== null);
     }
 
-    private function mapCustomerFromResponse(array $payer): CustomerDTO
+    /**
+     * Mapeia PaymentMethod VO para string do MercadoPago
+     */
+    private function mapPaymentMethod(PaymentMethodInterface $paymentMethod): string
     {
-        $address = null;
-        if (isset($payer['address'])) {
-            $address = new AddressDTO(
-                streetName: $payer['address']['street_name'] ?? null,
-                streetNumber: $payer['address']['street_number'] ?? null,
-                postalCode: $payer['address']['zip_code'] ?? null,
-                city: $payer['address']['city'] ?? null,
-                state: $payer['address']['federal_unit'] ?? null,
-                neighborhood: $payer['address']['neighborhood'] ?? null,
-            );
-        }
-
-        return new CustomerDTO(
-            id: $payer['id'] ?? null,
-            email: $payer['email'] ?? null,
-            firstName: $payer['first_name'] ?? null,
-            lastName: $payer['last_name'] ?? null,
-            document: $payer['identification']['number'] ?? null,
-            documentType: $payer['identification']['type'] ?? null,
-            phone: $payer['phone']['number'] ?? null,
-            address: $address,
-        );
+        return match($paymentMethod->getType()) {
+            PaymentMethod::PIX->value => 'pix',
+            PaymentMethod::CREDIT_CARD->value => 'credit_card',
+            default => throw new \InvalidArgumentException("Unsupported payment method: {$paymentMethod->getType()}")
+        };
     }
 
     private function mapStatus(string $status): PaymentStatus
     {
         return match ($status) {
-            'pending' => PaymentStatus::Pending,
-            'approved' => PaymentStatus::Approved,
-            'authorized' => PaymentStatus::Authorized,
-            'in_process' => PaymentStatus::InProcess,
-            'in_mediation' => PaymentStatus::InMediation,
-            'rejected' => PaymentStatus::Rejected,
-            'canceled' => PaymentStatus::Canceled,
-            'refunded' => PaymentStatus::Refunded,
-            'charged_back' => PaymentStatus::ChargedBack,
-            default => PaymentStatus::Pending,
+            'pending' => PaymentStatus::PENDING,
+            'approved' => PaymentStatus::APPROVED,
+            'authorized' => PaymentStatus::AUTHORIZED,
+            'in_process' => PaymentStatus::IN_PROCESS,
+            'in_mediation' => PaymentStatus::IN_MEDIATION,
+            'rejected' => PaymentStatus::REJECTED,
+            'canceled' => PaymentStatus::CANCELED,
+            'refunded' => PaymentStatus::REFUNDED,
+            'charged_back' => PaymentStatus::CHARGED_BACK,
+            default => PaymentStatus::PENDING,
         };
     }
 }

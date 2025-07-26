@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\DTOs\PaymentMethods;
 
+use Flowcoders\Maestro\Enums\CardBrand;
 use Flowcoders\Maestro\Enums\PaymentMethod;
 use Flowcoders\Maestro\Contracts\DTOs\PaymentMethodInterface;
 
@@ -15,7 +16,7 @@ readonly class CreditCardDTO implements PaymentMethodInterface
         public ?string $holderName = null,
         public ?int $expirationMonth = null,
         public ?int $expirationYear = null,
-        public ?string $brand = null,
+        public ?CardBrand $brand = null,
         public ?string $lastFourDigits = null,
     ) {}
 
@@ -25,7 +26,7 @@ readonly class CreditCardDTO implements PaymentMethodInterface
         ?string $holderName = null,
         ?int $expirationMonth = null,
         ?int $expirationYear = null,
-        ?string $brand = null,
+        ?CardBrand $brand = null,
         ?string $lastFourDigits = null,
     ): self {
         return new self(

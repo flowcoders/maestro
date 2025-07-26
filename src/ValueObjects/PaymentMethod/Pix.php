@@ -7,15 +7,22 @@ namespace Flowcoders\Maestro\ValueObjects\PaymentMethod;
 use DateTimeImmutable;
 use Flowcoders\Maestro\Contracts\ValueObjects\PaymentMethodInterface;
 use Flowcoders\Maestro\Enums\PaymentMethod;
+use Illuminate\Contracts\Support\Arrayable;
 use InvalidArgumentException;
 
-readonly class Pix implements PaymentMethodInterface
+readonly class Pix implements Arrayable, PaymentMethodInterface
 {
     public function __construct(
         public int $expiresAt = 60,
-        public ?string $pixKey = null,
     ) {
         $this->validateExpiresAt($expiresAt);
+    }
+
+    public static function create(int $expiresAt): self
+    {
+        return new self(
+            expiresAt: $expiresAt,
+        );
     }
 
     private function getExpiresAt(): DateTimeImmutable
@@ -65,7 +72,6 @@ readonly class Pix implements PaymentMethodInterface
             'type' => $this->getType(),
             'expires_at' => $this->getExpiresAt()->format('Y-m-d H:i:s'),
             'expires_at_timestamp' => $this->getExpirationTimestamp(),
-            'pix_key' => $this->pixKey,
         ];
     }
 }

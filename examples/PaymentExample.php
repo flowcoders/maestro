@@ -20,6 +20,7 @@ use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\DocumentType;
 use Flowcoders\Maestro\Factories\PaymentFactory;
 use Flowcoders\Maestro\Adapters\MercadoPagoAdapter;
+use Flowcoders\Maestro\Enums\CardBrand;
 use Flowcoders\Maestro\Mappers\MercadoPagoPaymentMapper;
 
 echo "=== MAESTRO PAYMENT PACKAGE - EXEMPLO DE USO ===\n\n";
@@ -49,13 +50,13 @@ $pixPayment = PaymentDTO::create(
     amount: 10000, // R$ 100,00 em centavos
     currency: Currency::BRL,
     description: 'Compra de produto XYZ',
-    paymentMethod: $pixMethod, // Interface permite PIX ou Card!
+    paymentMethod: $pixMethod,
     customer: $customer,
     externalReference: 'ORDER-123456',
     notificationUrl: 'https://meusite.com/webhook'
 );
 
-echo "✅ CustomerDTO criado: {$customer->getFullName()}\n";
+echo "✅ CustomerDTO criado: {$customer->firstName} {$customer->lastName}\n";
 echo "✅ PixDTO criado: expira em {$pixMethod->expiresAt} minutos\n";
 echo "✅ PaymentDTO criado: R$ " . number_format($pixPayment->amount / 100, 2, ',', '.') . "\n\n";
 
@@ -100,12 +101,14 @@ $customerCard = CustomerDTO::create(
     phone: '11888888888'
 );
 
+$cardBrand = CardBrand::VISA;
+
 $creditCard = CreditCardDTO::create(
     token: 'card_token_abc123',
     holderName: 'MARIA SANTOS',
     expirationMonth: 12,
     expirationYear: 2025,
-    brand: 'visa',
+    brand: $cardBrand,
     lastFourDigits: '1234'
 );
 
@@ -119,7 +122,7 @@ $cardPayment = PaymentDTO::create(
     externalReference: 'SUBSCRIPTION-789'
 );
 
-echo "✅ CustomerDTO criado: {$customerCard->getFullName()}\n";
+echo "✅ CustomerDTO criado: {$customerCard->firstName} {$customerCard->lastName}\n";
 echo "✅ CreditCardDTO criado: {$creditCard->brand} ****{$creditCard->lastFourDigits}\n";
 echo "✅ PaymentDTO criado: {$cardPayment->installments}x de R$ " . 
      number_format(($cardPayment->amount / $cardPayment->installments) / 100, 2, ',', '.') . "\n\n";

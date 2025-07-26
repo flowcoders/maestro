@@ -9,11 +9,13 @@ use Flowcoders\Maestro\ValueObjects\Address;
 use Flowcoders\Maestro\ValueObjects\Email;
 use Flowcoders\Maestro\ValueObjects\PhoneNumber;
 use Flowcoders\Maestro\ValueObjects\Cpf;
+use Illuminate\Contracts\Support\Arrayable;
 use InvalidArgumentException;
 
-readonly class Customer
+readonly class Customer implements Arrayable
 {
     public function __construct(
+        public ?string $id = null,
         public ?Email $email = null,
         public ?string $firstName = null,
         public ?string $lastName = null,
@@ -27,6 +29,7 @@ readonly class Customer
     }
 
     public static function create(
+        ?string $id = null,
         ?string $email = null,
         ?string $firstName = null,
         ?string $lastName = null,
@@ -36,6 +39,7 @@ readonly class Customer
         ?Address $address = null,
     ): self {
         return new self(
+            id: $id,
             email: $email ? new Email($email) : null,
             firstName: $firstName,
             lastName: $lastName,
@@ -44,6 +48,21 @@ readonly class Customer
             phone: $phone ? new PhoneNumber($phone) : null,
             address: $address,
         );
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'email' => $this->getEmailString(),
+            'first_name' => $this->firstName,
+            'last_name' => $this->lastName,
+            'full_name' => $this->getFullName(),
+            'document' => $this->getDocumentString(),
+            'document_type' => $this->documentType?->value,
+            'phone' => $this->getPhoneString(),
+            'address' => $this->address?->toArray(),
+        ];
     }
 
     private function validateRequiredFields(): void
@@ -87,19 +106,5 @@ readonly class Customer
     public function hasValidDocument(): bool
     {
         return $this->document !== null && $this->documentType !== null;
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'email' => $this->getEmailString(),
-            'first_name' => $this->firstName,
-            'last_name' => $this->lastName,
-            'full_name' => $this->getFullName(),
-            'document' => $this->getDocumentString(),
-            'document_type' => $this->documentType?->value,
-            'phone' => $this->getPhoneString(),
-            'address' => $this->address?->toArray(),
-        ];
     }
 }
