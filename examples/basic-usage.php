@@ -55,7 +55,7 @@ function createBasicPayment(): void
         echo "Status: {$payment->status->value}\n";
         echo "Amount: {$payment->amount} {$payment->currency->value}\n";
         echo "Customer: {$payment->customer?->getFullName()}\n";
-        
+
         if ($payment->hasError()) {
             echo "⚠️ Payment has errors: {$payment->error}\n";
         }

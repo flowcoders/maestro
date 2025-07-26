@@ -19,5 +19,6 @@ readonly class CreatePaymentDTO
         public ?string $notificationUrl = null,
         public ?string $callbackUrl = null,
         public int $installments = 1,
-    ) {}
+    ) {
+    }
 }

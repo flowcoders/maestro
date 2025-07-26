@@ -25,7 +25,8 @@ readonly class PaymentResponseDTO
         public ?array $pspResponse = null,
         public ?string $error = null,
         public ?string $errorCode = null,
-    ) {}
+    ) {
+    }
 
     public function isSuccessful(): bool
     {

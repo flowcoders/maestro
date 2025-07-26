@@ -69,17 +69,17 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
             customer: $customer,
             externalReference: $response['external_reference'] ?? null,
             paymentMethodId: $response['payment_method_id'] ?? null,
-            createdAt: isset($response['date_created']) 
-                ? new DateTimeImmutable($response['date_created']) 
+            createdAt: isset($response['date_created'])
+                ? new DateTimeImmutable($response['date_created'])
                 : null,
-            updatedAt: isset($response['date_last_updated']) 
-                ? new DateTimeImmutable($response['date_last_updated']) 
+            updatedAt: isset($response['date_last_updated'])
+                ? new DateTimeImmutable($response['date_last_updated'])
                 : null,
             metadata: $response['metadata'] ?? null,
             pspResponse: $response,
             error: $response['status_detail'] ?? null,
-            errorCode: isset($response['status']) && $response['status'] === 'rejected' 
-                ? $response['status_detail'] 
+            errorCode: isset($response['status']) && $response['status'] === 'rejected'
+                ? $response['status_detail']
                 : null,
         );
     }

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @see \Flowcoders\Maestro\Contracts\PaymentServiceProviderInterface
- * 
+ *
  * @method static \Flowcoders\Maestro\DTOs\PaymentResponseDTO createPayment(\Flowcoders\Maestro\DTOs\CreatePaymentDTO $paymentData)
  * @method static \Flowcoders\Maestro\DTOs\PaymentResponseDTO getPayment(string $paymentId)
  * @method static \Flowcoders\Maestro\DTOs\PaymentResponseDTO cancelPayment(string $paymentId)

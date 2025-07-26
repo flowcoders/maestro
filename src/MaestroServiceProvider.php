@@ -4,10 +4,8 @@ namespace Flowcoders\Maestro;
 
 use Flowcoders\Maestro\Commands\MaestroCommand;
 use Flowcoders\Maestro\Contracts\PaymentServiceProviderInterface;
-use Flowcoders\Maestro\Facades\Maestro;
 use Flowcoders\Maestro\Factories\PaymentServiceProviderFactory;
 use Illuminate\Http\Client\Factory as HttpFactory;
-use Illuminate\Support\ServiceProvider;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -38,7 +36,7 @@ class MaestroServiceProvider extends PackageServiceProvider
         $this->app->singleton(PaymentServiceProviderInterface::class, function ($app) {
             $config = $app['config']['maestro'];
             $factory = $app->make(PaymentServiceProviderFactory::class);
-            
+
             $defaultProvider = $config['default'];
             $providerConfig = $config['providers'][$defaultProvider];
 

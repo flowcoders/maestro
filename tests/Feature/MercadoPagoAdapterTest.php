@@ -27,7 +27,7 @@ class MercadoPagoAdapterTest extends TestCase
 
         $this->mockHttpClient = $this->createMock(HttpClientInterface::class);
         $this->mapper = new MercadoPagoPaymentMapper();
-        
+
         $this->adapter = new MercadoPagoAdapter(
             httpClient: $this->mockHttpClient,
             mapper: $this->mapper,
@@ -178,7 +178,7 @@ class MercadoPagoAdapterTest extends TestCase
         $this->mockHttpClient
             ->method('post')
             ->willReturn(new HttpResponseDTO(data: $refundResponse, statusCode: 201));
-            
+
         $this->mockHttpClient
             ->method('get')
             ->willReturn(new HttpResponseDTO(data: $updatedPaymentResponse, statusCode: 200));

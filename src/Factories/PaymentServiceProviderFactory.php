@@ -16,7 +16,8 @@ class PaymentServiceProviderFactory
 {
     public function __construct(
         private readonly HttpFactory $httpFactory
-    ) {}
+    ) {
+    }
 
     public function create(string $provider, array $credentials): PaymentServiceProviderInterface
     {

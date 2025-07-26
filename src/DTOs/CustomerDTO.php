@@ -15,7 +15,8 @@ readonly class CustomerDTO
         public ?string $documentType = null,
         public ?string $phone = null,
         public ?AddressDTO $address = null,
-    ) {}
+    ) {
+    }
 
     public function getFullName(): string
     {

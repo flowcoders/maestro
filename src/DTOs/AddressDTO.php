@@ -15,5 +15,6 @@ readonly class AddressDTO
         public ?string $country = null,
         public ?string $neighborhood = null,
         public ?string $complement = null,
-    ) {}
+    ) {
+    }
 }

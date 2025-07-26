@@ -11,7 +11,8 @@ readonly class HttpResponseDTO
         public int $statusCode,
         public array $headers = [],
         public ?string $error = null,
-    ) {}
+    ) {
+    }
 
     public function isSuccessful(): bool
     {

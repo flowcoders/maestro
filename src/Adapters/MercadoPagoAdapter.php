@@ -18,13 +18,14 @@ class MercadoPagoAdapter implements PaymentServiceProviderInterface
         private readonly HttpClientInterface $httpClient,
         private readonly PaymentMapperInterface $mapper,
         private readonly array $credentials,
-    ) {}
+    ) {
+    }
 
     public function createPayment(CreatePaymentDTO $paymentData): PaymentResponseDTO
     {
         try {
             $requestData = $this->mapper->mapCreatePaymentRequest($paymentData);
-            
+
             $response = $this->httpClient->post('/v1/payments', $requestData);
 
             if (!$response->isSuccessful()) {
@@ -100,7 +101,7 @@ class MercadoPagoAdapter implements PaymentServiceProviderInterface
     {
         try {
             $requestData = $this->mapper->mapRefundPaymentRequest($refundData);
-            
+
             $response = $this->httpClient->post("/v1/payments/{$refundData->paymentId}/refunds", $requestData);
 
             if (!$response->isSuccessful()) {

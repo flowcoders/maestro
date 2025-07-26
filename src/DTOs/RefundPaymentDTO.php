@@ -11,5 +11,6 @@ readonly class RefundPaymentDTO
         public ?int $amount = null,
         public ?string $reason = null,
         public ?array $metadata = null,
-    ) {}
+    ) {
+    }
 }

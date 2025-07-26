@@ -19,7 +19,8 @@ class BaseHttpClient implements HttpClientInterface
         private readonly array $defaultHeaders = [],
         private readonly int $timeout = 30,
         private readonly ?string $bearerToken = null,
-    ) {}
+    ) {
+    }
 
     public function post(string $endpoint, array $data = [], array $headers = []): HttpResponseDTO
     {
@@ -46,7 +47,7 @@ class BaseHttpClient implements HttpClientInterface
         try {
             $url = $this->baseUrl . $endpoint;
             $mergedHeaders = array_merge($this->defaultHeaders, $headers);
-            
+
             // Add bearer token if provided
             if ($this->bearerToken !== null) {
                 $mergedHeaders['Authorization'] = "Bearer {$this->bearerToken}";
