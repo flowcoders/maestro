@@ -5,21 +5,17 @@ declare(strict_types=1);
 namespace Flowcoders\Maestro\DTOs;
 
 use Flowcoders\Maestro\Enums\DocumentType;
-use Flowcoders\Maestro\ValueObjects\Email;
-use Flowcoders\Maestro\ValueObjects\PhoneNumber;
-use Flowcoders\Maestro\ValueObjects\Cpf;
-use Flowcoders\Maestro\Factories\ValueObjectFactory;
 
 readonly class CustomerDTO
 {
     public function __construct(
         public ?string $id = null,
-        public ?Email $email = null,
+        public ?string $email = null,
         public ?string $firstName = null,
         public ?string $lastName = null,
-        public ?Cpf $document = null,
+        public ?string $document = null,
         public ?DocumentType $documentType = null,
-        public ?PhoneNumber $phone = null,
+        public ?string $phone = null,
         public ?AddressDTO $address = null,
     ) {}
 
@@ -35,12 +31,12 @@ readonly class CustomerDTO
     ): self {
         return new self(
             id: $id,
-            email: ValueObjectFactory::createEmail($email),
+            email: $email,
             firstName: $firstName,
             lastName: $lastName,
-            document: ValueObjectFactory::createCpf($document),
+            document: $document,
             documentType: $documentType,
-            phone: ValueObjectFactory::createPhoneNumber($phone),
+            phone: $phone,
             address: $address,
         );
     }
@@ -48,20 +44,5 @@ readonly class CustomerDTO
     public function getFullName(): string
     {
         return trim("{$this->firstName} {$this->lastName}");
-    }
-
-    public function getEmailString(): ?string
-    {
-        return $this->email?->toString();
-    }
-
-    public function getPhoneString(): ?string
-    {
-        return $this->phone?->toString();
-    }
-
-    public function getDocumentString(): ?string
-    {
-        return $this->document?->toString();
     }
 }
