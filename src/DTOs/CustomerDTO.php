@@ -8,7 +8,7 @@ use Flowcoders\Maestro\Enums\DocumentType;
 use Flowcoders\Maestro\ValueObjects\Email;
 use Flowcoders\Maestro\ValueObjects\PhoneNumber;
 use Flowcoders\Maestro\ValueObjects\Cpf;
-use Flowcoders\Maestro\ValueObjects\ValueObjectFactory;
+use Flowcoders\Maestro\Factories\ValueObjectFactory;
 
 readonly class CustomerDTO
 {

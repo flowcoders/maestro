@@ -154,7 +154,7 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
             'in_process' => PaymentStatus::InProcess,
             'in_mediation' => PaymentStatus::InMediation,
             'rejected' => PaymentStatus::Rejected,
-            'cancelled' => PaymentStatus::Cancelled,
+            'canceled' => PaymentStatus::Canceled,
             'refunded' => PaymentStatus::Refunded,
             'charged_back' => PaymentStatus::ChargedBack,
             default => PaymentStatus::Pending,

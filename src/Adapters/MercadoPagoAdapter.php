@@ -74,7 +74,7 @@ class MercadoPagoAdapter implements PaymentServiceProviderInterface
     {
         try {
             $response = $this->httpClient->put("/v1/payments/{$paymentId}", [
-                'status' => 'cancelled',
+                'status' => 'canceled',
             ]);
 
             if (!$response->isSuccessful()) {

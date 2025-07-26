@@ -2,9 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Flowcoders\Maestro\ValueObjects;
+namespace Flowcoders\Maestro\Factories;
 
 use Flowcoders\Maestro\Enums\Country;
+use Flowcoders\Maestro\ValueObjects\Cpf;
+use Flowcoders\Maestro\ValueObjects\Email;
+use Flowcoders\Maestro\ValueObjects\PhoneNumber;
+use Flowcoders\Maestro\ValueObjects\PostalCode;
 
 class ValueObjectFactory
 {

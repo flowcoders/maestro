@@ -89,8 +89,8 @@ function managePayment(string $paymentId): void
 
         // Cancel payment if it's pending
         if ($payment->status->isPending()) {
-            $cancelledPayment = Maestro::cancelPayment($paymentId);
-            echo "Payment cancelled: {$cancelledPayment->status->value}\n";
+            $canceledPayment = Maestro::cancelPayment($paymentId);
+            echo "Payment canceled: {$canceledPayment->status->value}\n";
         }
 
         // Refund payment if it's approved

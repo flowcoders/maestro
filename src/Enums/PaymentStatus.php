@@ -6,38 +6,58 @@ namespace Flowcoders\Maestro\Enums;
 
 enum PaymentStatus: string
 {
-    case Pending = 'pending';
-    case Approved = 'approved';
-    case Authorized = 'authorized';
-    case InProcess = 'in_process';
-    case InMediation = 'in_mediation';
-    case Rejected = 'rejected';
-    case Cancelled = 'cancelled';
-    case Refunded = 'refunded';
-    case ChargedBack = 'charged_back';
+    case PENDING = 'pending';
+    case APPROVED = 'approved';
+    case AUTHORIZED = 'authorized';
+    case IN_PROCESS = 'in_process';
+    case IN_MEDIATION = 'in_mediation';
+    case REJECTED = 'rejected';
+    case CANCELED = 'canceled';
+    case REFUNDED = 'refunded';
+    case CHARGED_BACK = 'charged_back';
 
     public function isPending(): bool
     {
-        return $this === self::Pending;
+        return $this === self::PENDING;
     }
 
     public function isApproved(): bool
     {
-        return $this === self::Approved;
+        return $this === self::APPROVED;
+    }
+
+    public function isAuthorized(): bool
+    {
+        return $this === self::AUTHORIZED;
+    }
+
+    public function isInProcess(): bool
+    {
+        return $this === self::IN_PROCESS;
+    }
+
+    public function isInMediation(): bool
+    {
+        return $this === self::IN_MEDIATION;
     }
 
     public function isRejected(): bool
     {
-        return $this === self::Rejected;
+        return $this === self::REJECTED;
     }
 
-    public function isCancelled(): bool
+    public function isCanceled(): bool
     {
-        return $this === self::Cancelled;
+        return $this === self::CANCELED;
     }
 
     public function isRefunded(): bool
     {
-        return $this === self::Refunded;
+        return $this === self::REFUNDED;
+    }
+
+    public function isChargedBack(): bool
+    {
+        return $this === self::CHARGED_BACK;
     }
 }

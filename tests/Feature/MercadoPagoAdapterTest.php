@@ -122,7 +122,7 @@ class MercadoPagoAdapterTest extends TestCase
         $paymentId = '12345';
         $expectedResponse = [
             'id' => $paymentId,
-            'status' => 'cancelled',
+            'status' => 'canceled',
             'transaction_amount' => 100.00, // API returns decimal
             'currency_id' => 'BRL',
             'description' => 'Test payment',
@@ -131,7 +131,7 @@ class MercadoPagoAdapterTest extends TestCase
         $this->mockHttpClient
             ->expects($this->once())
             ->method('put')
-            ->with("/v1/payments/{$paymentId}", ['status' => 'cancelled'])
+            ->with("/v1/payments/{$paymentId}", ['status' => 'canceled'])
             ->willReturn(new HttpResponseDTO(
                 data: $expectedResponse,
                 statusCode: 200
@@ -143,7 +143,7 @@ class MercadoPagoAdapterTest extends TestCase
         // Assert
         $this->assertInstanceOf(PaymentResponseDTO::class, $result);
         $this->assertEquals($paymentId, $result->id);
-        $this->assertEquals(PaymentStatus::Cancelled, $result->status);
+        $this->assertEquals(PaymentStatus::Canceled, $result->status);
     }
 
     public function test_can_refund_payment_successfully(): void
