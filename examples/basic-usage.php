@@ -9,6 +9,7 @@ use Flowcoders\Maestro\DTOs\CustomerDTO;
 use Flowcoders\Maestro\DTOs\AddressDTO;
 use Flowcoders\Maestro\Enums\Country;
 use Flowcoders\Maestro\Enums\Currency;
+use Flowcoders\Maestro\Enums\DocumentType;
 use Flowcoders\Maestro\Facades\Maestro;
 
 // Example of basic payment creation
@@ -19,7 +20,7 @@ function createBasicPayment(): void
         firstName: 'João',
         lastName: 'Silva',
         document: '12345678900',
-        documentType: 'CPF',
+        documentType: DocumentType::CPF,
         phone: '+5511999999999',
         address: new AddressDTO(
             streetName: 'Rua das Flores',

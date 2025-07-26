@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\DTOs;
 
+use Flowcoders\Maestro\Concerns\ValidatesFormats;
 use Flowcoders\Maestro\Enums\Currency;
 
 readonly class CreatePaymentDTO
 {
+    use ValidatesFormats;
+
     public function __construct(
         public int $amount,
         public Currency $currency,
@@ -20,5 +23,7 @@ readonly class CreatePaymentDTO
         public ?string $notificationUrl = null,
         public ?string $callbackUrl = null,
     ) {
+        $this->validateAmount($amount);
+        $this->validateInstallments($installments);
     }
 }
