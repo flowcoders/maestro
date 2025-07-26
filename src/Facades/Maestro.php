@@ -2,15 +2,21 @@
 
 namespace Flowcoders\Maestro\Facades;
 
+use Flowcoders\Maestro\Contracts\PaymentServiceProviderInterface;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Flowcoders\Maestro\Maestro
+ * @see \Flowcoders\Maestro\Contracts\PaymentServiceProviderInterface
+ * 
+ * @method static \Flowcoders\Maestro\DTOs\PaymentResponseDTO createPayment(\Flowcoders\Maestro\DTOs\CreatePaymentDTO $paymentData)
+ * @method static \Flowcoders\Maestro\DTOs\PaymentResponseDTO getPayment(string $paymentId)
+ * @method static \Flowcoders\Maestro\DTOs\PaymentResponseDTO cancelPayment(string $paymentId)
+ * @method static \Flowcoders\Maestro\DTOs\PaymentResponseDTO refundPayment(\Flowcoders\Maestro\DTOs\RefundPaymentDTO $refundData)
  */
 class Maestro extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return \Flowcoders\Maestro\Maestro::class;
+        return PaymentServiceProviderInterface::class;
     }
 }
