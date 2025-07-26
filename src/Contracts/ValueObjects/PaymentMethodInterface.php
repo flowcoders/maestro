@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Flowcoders\Maestro\ValueObjects\PaymentMethod;
+namespace Flowcoders\Maestro\Contracts\ValueObjects;
 
 interface PaymentMethodInterface
 {

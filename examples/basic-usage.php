@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Flowcoders\Maestro\DTOs\CreatePaymentDTO;
+use Flowcoders\Maestro\DTOs\PaymentDTO;
 use Flowcoders\Maestro\DTOs\RefundPaymentDTO;
 use Flowcoders\Maestro\DTOs\CustomerDTO;
 use Flowcoders\Maestro\DTOs\AddressDTO;
+use Flowcoders\Maestro\DTOs\PaymentMethods\CreditCardDTO;
 use Flowcoders\Maestro\Enums\Country;
 use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\DocumentType;
-use Flowcoders\Maestro\ValueObjects\PaymentMethod\PaymentMethodFactory;
 use Flowcoders\Maestro\Facades\Maestro;
-use DateTimeImmutable;
+use Flowcoders\Maestro\DTOs\PaymentMethods\PixDTO;
 
 // Example of basic payment creation
 function createBasicPayment(): void
@@ -37,15 +37,15 @@ function createBasicPayment(): void
     );
 
     // Create a PIX payment method that expires in 1 hour
-    $pixPaymentMethod = PaymentMethodFactory::createPixWithDuration(
-        expirationMinutes: 60
+    $pix = PixDTO::create(
+        expiresAt: 60
     );
 
-    $paymentData = new CreatePaymentDTO(
+    $paymentData = new PaymentDTO(
         amount: 10000, // R$ 100.00 in cents
         currency: Currency::BRL,
         description: 'Compra de produto no e-commerce',
-        paymentMethod: $pixPaymentMethod,
+        paymentMethod: $pix,
         customer: $customer,
         externalReference: 'ORDER-12345',
         metadata: [
@@ -128,7 +128,7 @@ function paymentMethodExamples(): void
     // 1. Credit Card Payment with Installments
     echo "\n💳 Credit Card Payment:\n";
     try {
-        $creditCard = PaymentMethodFactory::createCreditCard(
+        $creditCard = CreditCardDTO::create(
             token: 'tok_card_12345',
             holderName: 'João Silva',
             expirationMonth: 12,
@@ -137,7 +137,7 @@ function paymentMethodExamples(): void
             lastFourDigits: '1234'
         );
 
-        $creditCardPayment = new CreatePaymentDTO(
+        $creditCardPayment = new PaymentDTO(
             amount: 24000, // R$ 240.00
             currency: Currency::BRL,
             description: 'Compra com cartão de crédito',
@@ -147,7 +147,6 @@ function paymentMethodExamples(): void
         );
 
         echo "✅ Credit card payment created with {$creditCardPayment->installments} installments\n";
-        echo "   Requires document: " . ($creditCardPayment->requiresDocument() ? 'Yes' : 'No') . "\n";
     } catch (Exception $e) {
         echo "❌ Credit card error: {$e->getMessage()}\n";
     }
@@ -155,11 +154,11 @@ function paymentMethodExamples(): void
     // 2. PIX Payment
     echo "\n🟢 PIX Payment:\n";
     try {
-        $pix = PaymentMethodFactory::createPixWithDuration(
-            expirationMinutes: 30 // Expires in 30 minutes
+        $pix = PixDTO::create(
+            expiresAt: 30 // Expires in 30 minutes
         );
 
-        $pixPayment = new CreatePaymentDTO(
+        new PaymentDTO(
             amount: 5000, // R$ 50.00
             currency: Currency::BRL,
             description: 'Pagamento via PIX',
@@ -168,39 +167,16 @@ function paymentMethodExamples(): void
         );
 
         echo "✅ PIX payment created with 30min expiration\n";
-        echo "   Requires document: " . ($pixPayment->requiresDocument() ? 'Yes' : 'No') . "\n";
     } catch (Exception $e) {
         echo "❌ PIX error: {$e->getMessage()}\n";
     }
 
-    // 3. Bank Slip Payment
-    echo "\n🧾 Bank Slip Payment:\n";
-    try {
-        $bankSlip = PaymentMethodFactory::createBankSlipWithDays(
-            expirationDays: 7,
-            instructions: 'Não receber após o vencimento'
-        );
-
-        $bankSlipPayment = new CreatePaymentDTO(
-            amount: 15000, // R$ 150.00
-            currency: Currency::BRL,
-            description: 'Pagamento via boleto bancário',
-            paymentMethod: $bankSlip,
-            customer: $customer // Required for bank slip
-        );
-
-        echo "✅ Bank slip payment created with 7 days expiration\n";
-        echo "   Requires document: " . ($bankSlipPayment->requiresDocument() ? 'Yes' : 'No') . "\n";
-    } catch (Exception $e) {
-        echo "❌ Bank slip error: {$e->getMessage()}\n";
-    }
-
-    // 4. Example of validation error (PIX without customer)
+    // 3. Example of validation error (PIX without customer)
     echo "\n⚠️  Validation Example (PIX without customer):\n";
     try {
-        $pix = PaymentMethodFactory::createPixWithDuration(60);
+        $pix = PixDTO::create(expiresAt: 60);
         
-        new CreatePaymentDTO(
+        new PaymentDTO(
             amount: 1000,
             currency: Currency::BRL,
             description: 'This will fail',

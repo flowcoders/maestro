@@ -31,9 +31,4 @@ readonly class Email implements Stringable
     {
         return $this->value === $other->value;
     }
-
-    public function getDomain(): string
-    {
-        return substr($this->value, strpos($this->value, '@') + 1);
-    }
 }

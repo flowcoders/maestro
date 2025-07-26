@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Flowcoders\Maestro\DTOs;
 
 use Flowcoders\Maestro\Enums\Country;
+use Flowcoders\Maestro\Factories\ValueObjectFactory;
 use Flowcoders\Maestro\ValueObjects\PostalCode;
-use Flowcoders\Maestro\ValueObjects\ValueObjectFactory;
 readonly class AddressDTO
 {
     public function __construct(

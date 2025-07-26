@@ -7,7 +7,7 @@ namespace Flowcoders\Maestro\ValueObjects;
 use Flowcoders\Maestro\DTOs\CustomerDTO;
 use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\PaymentMethod;
-use Flowcoders\Maestro\ValueObjects\PaymentMethod\PaymentMethodInterface;
+use Flowcoders\Maestro\Contracts\ValueObjects\PaymentMethodInterface;
 use InvalidArgumentException;
 
 readonly class Payment

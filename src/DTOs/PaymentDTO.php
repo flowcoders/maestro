@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Flowcoders\Maestro\DTOs;
 
 use Flowcoders\Maestro\Enums\Currency;
-use Flowcoders\Maestro\ValueObjects\PaymentMethod\PaymentMethodInterface;
+use Flowcoders\Maestro\Contracts\DTOs\PaymentMethodInterface;
 
-readonly class CreatePaymentDTO
+readonly class PaymentDTO
 {
     public function __construct(
         public int $amount,
