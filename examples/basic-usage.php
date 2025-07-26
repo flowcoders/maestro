@@ -175,7 +175,7 @@ function paymentMethodExamples(): void
     echo "\n⚠️  Validation Example (PIX without customer):\n";
     try {
         $pix = PixDTO::create(expiresAt: 60);
-        
+
         new PaymentDTO(
             amount: 1000,
             currency: Currency::BRL,

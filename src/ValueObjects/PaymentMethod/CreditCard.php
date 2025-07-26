@@ -91,7 +91,7 @@ readonly class CreditCard implements Arrayable, PaymentMethodInterface
         }
 
         $currentYear = (int) date('Y');
-        
+
         if ($year < $currentYear) {
             throw new InvalidArgumentException("Expiration year cannot be in the past: {$year}");
         }

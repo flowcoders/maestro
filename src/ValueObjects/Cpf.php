@@ -13,7 +13,7 @@ readonly class Cpf implements Stringable
         private string $value
     ) {
         $normalized = $this->normalize($value);
-        
+
         if (! $this->isValid($normalized)) {
             throw new InvalidArgumentException("Invalid CPF: {$value}");
         }
@@ -71,7 +71,7 @@ readonly class Cpf implements Stringable
     public function formatted(): string
     {
         $normalized = $this->normalize($this->value);
-        
+
         return sprintf(
             '%s.%s.%s-%s',
             substr($normalized, 0, 3),

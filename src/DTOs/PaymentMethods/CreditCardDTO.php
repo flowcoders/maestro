@@ -18,7 +18,8 @@ readonly class CreditCardDTO implements PaymentMethodInterface
         public ?int $expirationYear = null,
         public ?CardBrand $brand = null,
         public ?string $lastFourDigits = null,
-    ) {}
+    ) {
+    }
 
     public static function create(
         ?string $token = null,

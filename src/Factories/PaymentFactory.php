@@ -6,8 +6,6 @@ namespace Flowcoders\Maestro\Factories;
 
 use Flowcoders\Maestro\DTOs\PaymentDTO;
 use Flowcoders\Maestro\Enums\PaymentMethod;
-use Flowcoders\Maestro\Factories\PaymentMethodFactory;
-use Flowcoders\Maestro\Factories\CustomerFactory;
 use Flowcoders\Maestro\ValueObjects\Payment;
 
 class PaymentFactory

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\ValueObjects;
 
-use Flowcoders\Maestro\ValueObjects\Customer;
 use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\PaymentMethod;
 use Flowcoders\Maestro\Contracts\ValueObjects\PaymentMethodInterface;

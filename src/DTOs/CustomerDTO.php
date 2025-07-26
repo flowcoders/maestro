@@ -17,7 +17,8 @@ readonly class CustomerDTO
         public ?DocumentType $documentType = null,
         public ?string $phone = null,
         public ?AddressDTO $address = null,
-    ) {}
+    ) {
+    }
 
     public static function create(
         ?string $id = null,

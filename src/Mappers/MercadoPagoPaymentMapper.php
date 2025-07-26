@@ -11,6 +11,8 @@ use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\PaymentStatus;
 use DateTimeImmutable;
 use Flowcoders\Maestro\Contracts\ValueObjects\PaymentMethodInterface;
+use Flowcoders\Maestro\DTOs\AddressDTO;
+use Flowcoders\Maestro\DTOs\CustomerDTO;
 use Flowcoders\Maestro\Enums\PaymentMethod;
 use Flowcoders\Maestro\ValueObjects\Address;
 use Flowcoders\Maestro\ValueObjects\Customer;
@@ -145,5 +147,18 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
             'charged_back' => PaymentStatus::CHARGED_BACK,
             default => PaymentStatus::PENDING,
         };
+    }
+
+    private function mapCustomerFromResponse(array $customer): CustomerDTO
+    {
+        return CustomerDTO::create(
+            email: $customer['email'],
+            firstName: $customer['first_name'],
+            lastName: $customer['last_name'],
+            document: $customer['identification']['number'],
+            documentType: $customer['identification']['type'],
+            phone: $customer['phone']['number'],
+            address: $customer['address'] ? AddressDTO::create($customer['address']) : null,
+        );
     }
 }

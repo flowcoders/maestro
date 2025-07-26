@@ -34,7 +34,7 @@ readonly class Pix implements Arrayable, PaymentMethodInterface
     {
         $expiresDate = $this->getExpiresAt();
         $now = new DateTimeImmutable();
-        
+
         if ($expiresDate <= $now) {
             throw new InvalidArgumentException('PIX expiration date must be in the future');
         }

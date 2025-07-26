@@ -59,7 +59,7 @@ readonly class PostalCode implements Stringable
     private function formatBrazilian(): string
     {
         $normalized = preg_replace('/[^0-9]/', '', $this->value);
-        
+
         return substr($normalized, 0, 5) . '-' . substr($normalized, 5, 3);
     }
 

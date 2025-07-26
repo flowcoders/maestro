@@ -11,7 +11,8 @@ readonly class PixDTO implements PaymentMethodInterface
 {
     public function __construct(
         public int $expiresAt = 60,
-    ) {}
+    ) {
+    }
 
     public static function create(int $expiresAt): self
     {

@@ -46,7 +46,7 @@ readonly class PhoneNumber implements Stringable
     public function getAreaCode(): string
     {
         preg_match('/\(?(\d{2})\)?/', $this->value, $matches);
-        
+
         return $matches[1] ?? '';
     }
 }

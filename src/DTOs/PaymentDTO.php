@@ -20,7 +20,8 @@ readonly class PaymentDTO
         public ?array $metadata = null,
         public ?string $notificationUrl = null,
         public ?string $callbackUrl = null,
-    ) {}
+    ) {
+    }
 
     public static function create(
         int $amount,

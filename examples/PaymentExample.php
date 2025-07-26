@@ -2,7 +2,7 @@
 
 /**
  * Exemplo de Uso Completo - Maestro Payment Package
- * 
+ *
  * Este exemplo demonstra a nova arquitetura:
  * 1. Usuario monta DTOs (interface externa, sem validação)
  * 2. Factory converte DTO → VO (com validação)
@@ -19,7 +19,6 @@ use Flowcoders\Maestro\DTOs\PaymentMethods\CreditCardDTO;
 use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\DocumentType;
 use Flowcoders\Maestro\Factories\PaymentFactory;
-use Flowcoders\Maestro\Adapters\MercadoPagoAdapter;
 use Flowcoders\Maestro\Enums\CardBrand;
 use Flowcoders\Maestro\Mappers\MercadoPagoPaymentMapper;
 
@@ -30,7 +29,7 @@ echo "=== MAESTRO PAYMENT PACKAGE - EXEMPLO DE USO ===\n\n";
 // ================================================================
 
 echo "📱 EXEMPLO 1: Pagamento PIX\n";
-echo "=".str_repeat("=", 50)."\n\n";
+echo '=' . str_repeat('=', 50) . "\n\n";
 
 // 1. USUARIO monta DTOs (interface externa - sem validação)
 echo "1️⃣ Usuario monta DTOs (interface externa):\n";
@@ -58,7 +57,7 @@ $pixPayment = PaymentDTO::create(
 
 echo "✅ CustomerDTO criado: {$customer->firstName} {$customer->lastName}\n";
 echo "✅ PixDTO criado: expira em {$pixMethod->expiresAt} minutos\n";
-echo "✅ PaymentDTO criado: R$ " . number_format($pixPayment->amount / 100, 2, ',', '.') . "\n\n";
+echo '✅ PaymentDTO criado: R$ ' . number_format($pixPayment->amount / 100, 2, ',', '.') . "\n\n";
 
 // 2. FACTORY converte DTO → VO (com validação)
 echo "2️⃣ Factory converte DTO → VO (com validação):\n";
@@ -66,9 +65,9 @@ echo "2️⃣ Factory converte DTO → VO (com validação):\n";
 try {
     $validatedPayment = PaymentFactory::fromDTO($pixPayment);
     echo "✅ Payment VO criado e validado!\n";
-    echo "   - Customer com documento válido: " . ($validatedPayment->customer->hasValidDocument() ? 'SIM' : 'NÃO') . "\n";
+    echo '   - Customer com documento válido: ' . ($validatedPayment->customer->hasValidDocument() ? 'SIM' : 'NÃO') . "\n";
     echo "   - PaymentMethod tipo: {$validatedPayment->paymentMethod->getType()}\n";
-    echo "   - Requer customer: " . ($validatedPayment->requiresCustomer() ? 'SIM' : 'NÃO') . "\n\n";
+    echo '   - Requer customer: ' . ($validatedPayment->requiresCustomer() ? 'SIM' : 'NÃO') . "\n\n";
 } catch (\InvalidArgumentException $e) {
     echo "❌ Erro de validação: {$e->getMessage()}\n\n";
     exit(1);
@@ -88,7 +87,7 @@ echo json_encode($pspPayload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n\
 // ================================================================
 
 echo "💳 EXEMPLO 2: Pagamento Cartão de Crédito\n";
-echo "=".str_repeat("=", 50)."\n\n";
+echo '=' . str_repeat('=', 50) . "\n\n";
 
 // 1. USUARIO monta DTOs (interface externa)
 echo "1️⃣ Usuario monta DTOs (interface externa):\n";
@@ -124,7 +123,7 @@ $cardPayment = PaymentDTO::create(
 
 echo "✅ CustomerDTO criado: {$customerCard->firstName} {$customerCard->lastName}\n";
 echo "✅ CreditCardDTO criado: {$creditCard->brand} ****{$creditCard->lastFourDigits}\n";
-echo "✅ PaymentDTO criado: {$cardPayment->installments}x de R$ " . 
+echo "✅ PaymentDTO criado: {$cardPayment->installments}x de R$ " .
      number_format(($cardPayment->amount / $cardPayment->installments) / 100, 2, ',', '.') . "\n\n";
 
 // 2. FACTORY converte DTO → VO (com validação)
@@ -133,7 +132,7 @@ echo "2️⃣ Factory converte DTO → VO (com validação):\n";
 try {
     $validatedCardPayment = PaymentFactory::fromDTO($cardPayment);
     echo "✅ Payment VO criado e validado!\n";
-    echo "   - Customer sem documento: " . ($validatedCardPayment->customer->hasValidDocument() ? 'SIM' : 'NÃO') . "\n";
+    echo '   - Customer sem documento: ' . ($validatedCardPayment->customer->hasValidDocument() ? 'SIM' : 'NÃO') . "\n";
     echo "   - PaymentMethod tipo: {$validatedCardPayment->paymentMethod->getType()}\n";
     echo "   - Parcelas: {$validatedCardPayment->installments}x\n\n";
 } catch (\InvalidArgumentException $e) {
@@ -154,7 +153,7 @@ echo json_encode($cardPspPayload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . 
 // ================================================================
 
 echo "🛡️ EXEMPLO 3: Demonstração de Validações\n";
-echo "=".str_repeat("=", 50)."\n\n";
+echo '=' . str_repeat('=', 50) . "\n\n";
 
 echo "1️⃣ Testando PIX sem customer (deve falhar):\n";
 
@@ -214,7 +213,7 @@ try {
 // ================================================================
 
 echo "🚀 EXEMPLO 4: Fluxo Completo com Adapter (Simulado)\n";
-echo "=".str_repeat("=", 50)."\n\n";
+echo '=' . str_repeat('=', 50) . "\n\n";
 
 echo "1️⃣ Preparando pagamento PIX completo:\n";
 
@@ -236,7 +235,7 @@ $finalPayment = PaymentDTO::create(
     description: 'Pagamento de teste - Produto ABC',
     paymentMethod: $finalPix,
     customer: $finalCustomer,
-    externalReference: 'TEST-'.uniqid(),
+    externalReference: 'TEST-' . uniqid(),
     notificationUrl: 'https://webhook.example.com/payment'
 );
 
@@ -270,7 +269,7 @@ echo "✅ PaymentResponseDTO criado a partir da resposta do PSP\n\n";
 echo "📊 RESULTADO FINAL:\n";
 echo "   - Payment ID: {$responseDTO->id}\n";
 echo "   - Status: {$responseDTO->status->value}\n";
-echo "   - Valor: R$ " . number_format($responseDTO->amount / 100, 2, ',', '.') . "\n";
+echo '   - Valor: R$ ' . number_format($responseDTO->amount / 100, 2, ',', '.') . "\n";
 echo "   - Método: {$responseDTO->paymentMethod}\n";
 echo "   - Referência: {$responseDTO->externalReference}\n\n";
 
@@ -279,7 +278,7 @@ echo "   - Referência: {$responseDTO->externalReference}\n\n";
 // ================================================================
 
 echo "📋 RESUMO DA NOVA ARQUITETURA\n";
-echo "=".str_repeat("=", 50)."\n\n";
+echo '=' . str_repeat('=', 50) . "\n\n";
 
 echo "1️⃣ USUARIO trabalha com DTOs:\n";
 echo "   ✅ Interface simples e limpa\n";

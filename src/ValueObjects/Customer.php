@@ -5,10 +5,6 @@ declare(strict_types=1);
 namespace Flowcoders\Maestro\ValueObjects;
 
 use Flowcoders\Maestro\Enums\DocumentType;
-use Flowcoders\Maestro\ValueObjects\Address;
-use Flowcoders\Maestro\ValueObjects\Email;
-use Flowcoders\Maestro\ValueObjects\PhoneNumber;
-use Flowcoders\Maestro\ValueObjects\Cpf;
 use Illuminate\Contracts\Support\Arrayable;
 use InvalidArgumentException;
 

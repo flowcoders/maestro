@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Flowcoders\Maestro\DTOs;
 
 use Flowcoders\Maestro\Enums\Country;
+
 readonly class AddressDTO
 {
     public function __construct(
