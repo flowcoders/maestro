@@ -5,16 +5,12 @@ declare(strict_types=1);
 namespace Flowcoders\Maestro\DTOs;
 
 use Flowcoders\Maestro\Enums\Country;
-use Flowcoders\Maestro\Concerns\ValidatesFormats;
-
+use Flowcoders\Maestro\ValueObjects\PostalCode;
+use Flowcoders\Maestro\ValueObjects\ValueObjectFactory;
 readonly class AddressDTO
 {
-    use ValidatesFormats;
-
-    public readonly string $postalCode;
-
     public function __construct(
-        string $postalCode,
+        public PostalCode $postalCode,
         public ?string $streetName = null,
         public ?string $streetNumber = null,
         public ?string $city = null,
@@ -23,7 +19,27 @@ readonly class AddressDTO
         public ?string $neighborhood = null,
         public ?string $complement = null,
     ) {
-        $this->validatePostalCode($postalCode);
-        $this->postalCode = $this->normalizePostalCode($postalCode);
+    }
+
+    public static function create(
+        string $postalCode,
+        ?string $streetName = null,
+        ?string $streetNumber = null,
+        ?string $city = null,
+        ?string $state = null,
+        ?Country $country = null,
+        ?string $neighborhood = null,
+        ?string $complement = null,
+    ): self {
+        return new self(
+            postalCode: ValueObjectFactory::createPostalCode($postalCode),
+            streetName: $streetName,
+            streetNumber: $streetNumber,
+            city: $city,
+            state: $state,
+            country: $country,
+            neighborhood: $neighborhood,
+            complement: $complement,
+        );
     }
 }
