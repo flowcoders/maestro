@@ -50,8 +50,7 @@ class PaymentServiceProviderFactory
 
         return new MercadoPagoAdapter(
             httpClient: $httpClient,
-            mapper: $mapper,
-            credentials: $credentials
+            mapper: $mapper
         );
     }
 

@@ -17,7 +17,6 @@ class MercadoPagoAdapter implements PaymentServiceProviderInterface
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly PaymentMapperInterface $mapper,
-        private readonly array $credentials,
     ) {
     }
 
