@@ -13,7 +13,7 @@ readonly class CreatePaymentDTO
         public Currency $currency,
         public string $description,
         public ?CustomerDTO $customer = null,
-        public ?string $paymentMethodId = null,
+        public ?string $paymentMethod = null,
         public ?string $externalReference = null,
         public ?array $metadata = null,
         public ?string $notificationUrl = null,

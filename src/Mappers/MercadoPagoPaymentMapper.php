@@ -22,7 +22,7 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
             'transaction_amount' => $dto->amount / 100, // Convert cents to decimal
             'description' => $dto->description,
             'installments' => $dto->installments,
-            'payment_method_id' => $dto->paymentMethodId,
+            'payment_method_id' => $dto->paymentMethod,
             'external_reference' => $dto->externalReference,
             'notification_url' => $dto->notificationUrl,
             'callback_url' => $dto->callbackUrl,
@@ -68,7 +68,7 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
             description: $response['description'] ?? null,
             customer: $customer,
             externalReference: $response['external_reference'] ?? null,
-            paymentMethodId: $response['payment_method_id'] ?? null,
+            paymentMethod: $response['payment_method_id'] ?? null,
             createdAt: isset($response['date_created'])
                 ? new DateTimeImmutable($response['date_created'])
                 : null,

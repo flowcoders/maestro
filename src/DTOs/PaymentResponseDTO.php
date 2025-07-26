@@ -18,7 +18,7 @@ readonly class PaymentResponseDTO
         public ?string $description = null,
         public ?CustomerDTO $customer = null,
         public ?string $externalReference = null,
-        public ?string $paymentMethodId = null,
+        public ?string $paymentMethod = null,
         public ?DateTimeImmutable $createdAt = null,
         public ?DateTimeImmutable $updatedAt = null,
         public ?array $metadata = null,

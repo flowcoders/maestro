@@ -30,11 +30,7 @@ class MercadoPagoAdapterTest extends TestCase
 
         $this->adapter = new MercadoPagoAdapter(
             httpClient: $this->mockHttpClient,
-            mapper: $this->mapper,
-            credentials: [
-                'access_token' => 'TEST_TOKEN',
-                'sandbox' => true,
-            ]
+            mapper: $this->mapper
         );
     }
 
@@ -50,7 +46,7 @@ class MercadoPagoAdapterTest extends TestCase
                 firstName: 'John',
                 lastName: 'Doe'
             ),
-            paymentMethodId: 'pix'
+            paymentMethod: 'pix'
         );
 
         $expectedResponse = [

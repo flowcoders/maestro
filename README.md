@@ -76,7 +76,7 @@ $payment = Maestro::createPayment(new CreatePaymentDTO(
         firstName: 'John',
         lastName: 'Doe'
     ),
-    paymentMethodId: 'pix'
+    paymentMethod: 'pix'
 ));
 
 echo $payment->id; // Payment ID from provider

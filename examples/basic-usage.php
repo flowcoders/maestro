@@ -36,7 +36,7 @@ function createBasicPayment(): void
         currency: Currency::BRL,
         description: 'Compra de produto no e-commerce',
         customer: $customer,
-        paymentMethodId: 'pix',
+        paymentMethod: 'pix',
         externalReference: 'ORDER-12345',
         metadata: [
             'order_id' => '12345',
