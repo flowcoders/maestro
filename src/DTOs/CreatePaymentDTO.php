@@ -12,13 +12,13 @@ readonly class CreatePaymentDTO
         public int $amount,
         public Currency $currency,
         public string $description,
+        public int $installments = 1,
         public ?CustomerDTO $customer = null,
         public ?string $paymentMethod = null,
         public ?string $externalReference = null,
         public ?array $metadata = null,
         public ?string $notificationUrl = null,
         public ?string $callbackUrl = null,
-        public int $installments = 1,
     ) {
     }
 }

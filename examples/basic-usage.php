@@ -7,6 +7,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Flowcoders\Maestro\DTOs\CreatePaymentDTO;
 use Flowcoders\Maestro\DTOs\CustomerDTO;
 use Flowcoders\Maestro\DTOs\AddressDTO;
+use Flowcoders\Maestro\Enums\Country;
 use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Facades\Maestro;
 
@@ -26,7 +27,7 @@ function createBasicPayment(): void
             postalCode: '01234-567',
             city: 'São Paulo',
             state: 'SP',
-            country: 'Brasil',
+            country: Country::BR,
             neighborhood: 'Centro'
         )
     );
