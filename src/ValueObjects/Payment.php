@@ -16,8 +16,8 @@ readonly class Payment
         public Currency $currency,
         public string $description,
         public PaymentMethodInterface $paymentMethod,
-        public int $installments = 1,
         public Customer $customer,
+        public int $installments = 1,
         public ?string $externalReference = null,
         public ?array $metadata = null,
         public ?string $notificationUrl = null,
@@ -55,10 +55,6 @@ readonly class Payment
     {
         // PIX requires customer with valid document
         if ($this->paymentMethod->getType() === PaymentMethod::PIX->value) {
-            if (!$this->customer) {
-                throw new InvalidArgumentException('PIX payments require customer information');
-            }
-
             if (!$this->customer->hasValidDocument()) {
                 throw new InvalidArgumentException('PIX payments require customer with valid document');
             }
@@ -83,8 +79,8 @@ readonly class Payment
             'currency' => $this->currency->value,
             'description' => $this->description,
             'payment_method' => $this->paymentMethod->toArray(),
+            'customer' => $this->customer->toArray(),
             'installments' => $this->installments,
-            'customer' => $this->customer?->toArray(),
             'external_reference' => $this->externalReference,
             'metadata' => $this->metadata,
             'notification_url' => $this->notificationUrl,

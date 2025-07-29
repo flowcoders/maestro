@@ -59,7 +59,7 @@ readonly class Address implements Arrayable
 
     public function toString(): string
     {
-        return $this->postalCode . ' ' . $this->streetName . ' ' . $this->streetNumber . ' ' . $this->city . ' ' . $this->state . ' ' . $this->country . ' ' . $this->neighborhood . ' ' . $this->complement;
+        return $this->postalCode . ' ' . $this->streetName . ' ' . $this->streetNumber . ' ' . $this->city . ' ' . $this->state . ' ' . $this->country->value . ' ' . $this->neighborhood . ' ' . $this->complement;
     }
 
     public function __toString(): string
