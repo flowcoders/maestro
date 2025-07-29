@@ -27,26 +27,6 @@ readonly class CreditCard implements Arrayable, PaymentMethodInterface
         $this->validateExpirationYear($expirationYear);
     }
 
-    public static function create(
-        ?string $token = null,
-        ?string $bin = null,
-        ?string $holderName = null,
-        ?int $expirationMonth = null,
-        ?int $expirationYear = null,
-        ?CardBrand $brand = null,
-        ?string $lastFourDigits = null,
-    ): self {
-        return new self(
-            token: $token,
-            bin: $bin,
-            holderName: $holderName,
-            expirationMonth: $expirationMonth,
-            expirationYear: $expirationYear,
-            brand: $brand,
-            lastFourDigits: $lastFourDigits,
-        );
-    }
-
     private function validateToken(?string $token): void
     {
         if (is_null($token)) {

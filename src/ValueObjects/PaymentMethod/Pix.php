@@ -15,14 +15,7 @@ readonly class Pix implements Arrayable, PaymentMethodInterface
     public function __construct(
         public int $expiresAt = 60,
     ) {
-        $this->validateExpiresAt($expiresAt);
-    }
-
-    public static function create(int $expiresAt): self
-    {
-        return new self(
-            expiresAt: $expiresAt,
-        );
+        $this->validateExpiresAt();
     }
 
     private function getExpiresAt(): DateTimeImmutable
@@ -30,7 +23,7 @@ readonly class Pix implements Arrayable, PaymentMethodInterface
         return (new DateTimeImmutable())->modify("+{$this->expiresAt} minutes");
     }
 
-    private function validateExpiresAt(int $expiresAt): void
+    private function validateExpiresAt(): void
     {
         $expiresDate = $this->getExpiresAt();
         $now = new DateTimeImmutable();
@@ -41,7 +34,7 @@ readonly class Pix implements Arrayable, PaymentMethodInterface
 
         // PIX payments typically expire within 24 hours
         $maxExpirationTime = $now->modify('+24 hours');
-        if ($expiresAt > $maxExpirationTime) {
+        if ($expiresDate > $maxExpirationTime) {
             throw new InvalidArgumentException('PIX expiration date cannot be more than 24 hours in the future');
         }
     }

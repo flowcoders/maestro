@@ -13,12 +13,12 @@ class PaymentMethodFactory
 {
     public static function createPixFromDTO(PixDTO $pixDTO): Pix
     {
-        return Pix::create($pixDTO->expiresAt);
+        return new Pix(expiresAt: $pixDTO->expiresAt);
     }
 
     public static function createCreditCardFromDTO(CreditCardDTO $cardDTO): CreditCard
     {
-        return CreditCard::create(
+        return new CreditCard(
             token: $cardDTO->token,
             bin: $cardDTO->bin,
             holderName: $cardDTO->holderName,

@@ -26,7 +26,7 @@ class Maestro
     {
         // Convert DTO to VO at the facade boundary
         $paymentVO = PaymentFactory::fromDTO($paymentDTO);
-        
+
         // Pass validated VO to the service provider
         return $this->paymentProvider->createPayment($paymentVO);
     }

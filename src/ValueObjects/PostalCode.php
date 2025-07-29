@@ -24,7 +24,7 @@ readonly class PostalCode implements Stringable
         return match ($country) {
             Country::BR => $this->isValidBrazilianPostalCode($code),
             Country::AR => $this->isValidArgentinianPostalCode($code),
-            // Add more countries as needed
+            default => false,
         };
     }
 
@@ -53,6 +53,7 @@ readonly class PostalCode implements Stringable
         return match ($this->country) {
             Country::BR => $this->formatBrazilian(),
             Country::AR => $this->value, // Already formatted
+            default => $this->value,
         };
     }
 
