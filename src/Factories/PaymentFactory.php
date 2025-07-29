@@ -5,22 +5,23 @@ declare(strict_types=1);
 namespace Flowcoders\Maestro\Factories;
 
 use Flowcoders\Maestro\DTOs\PaymentDTO;
-use Flowcoders\Maestro\Enums\PaymentMethod;
+use Flowcoders\Maestro\DTOs\PaymentMethods\CreditCardDTO;
+use Flowcoders\Maestro\DTOs\PaymentMethods\PixDTO;
 use Flowcoders\Maestro\ValueObjects\Payment;
 
 class PaymentFactory
 {
     public static function fromDTO(PaymentDTO $paymentDTO): Payment
     {
-        $paymentMethodVO = match($paymentDTO->paymentMethod->getType()) {
-            PaymentMethod::PIX->value => PaymentMethodFactory::createPixFromDTO($paymentDTO->paymentMethod),
-            PaymentMethod::CREDIT_CARD->value => PaymentMethodFactory::createCreditCardFromDTO($paymentDTO->paymentMethod),
-            default => throw new \InvalidArgumentException("Unsupported payment method: {$paymentDTO->paymentMethod->getType()}")
+        $paymentMethodVO = match (true) {
+            $paymentDTO->paymentMethod instanceof PixDTO => PaymentMethodFactory::createPixFromDTO($paymentDTO->paymentMethod),
+            $paymentDTO->paymentMethod instanceof CreditCardDTO => PaymentMethodFactory::createCreditCardFromDTO($paymentDTO->paymentMethod),
+            default => throw new \InvalidArgumentException('Unsupported payment method type: ' . get_class($paymentDTO->paymentMethod))
         };
 
         $customerVO = CustomerFactory::fromDTO($paymentDTO->customer);
 
-        return Payment::create(
+        return new Payment(
             amount: $paymentDTO->amount,
             currency: $paymentDTO->currency,
             description: $paymentDTO->description,

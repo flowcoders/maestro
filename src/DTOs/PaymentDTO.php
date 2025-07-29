@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Flowcoders\Maestro\DTOs;
 
 use Flowcoders\Maestro\Enums\Currency;
-use Flowcoders\Maestro\Contracts\DTOs\PaymentMethodInterface;
+use Flowcoders\Maestro\Contracts\PaymentMethodInterface;
 
 readonly class PaymentDTO
 {

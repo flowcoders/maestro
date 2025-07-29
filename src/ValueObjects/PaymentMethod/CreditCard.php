@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\ValueObjects\PaymentMethod;
 
-use Flowcoders\Maestro\Contracts\ValueObjects\PaymentMethodInterface;
+use Flowcoders\Maestro\Contracts\PaymentMethodInterface;
 use Flowcoders\Maestro\Enums\CardBrand;
 use Flowcoders\Maestro\Enums\PaymentMethod;
 use Illuminate\Contracts\Support\Arrayable;

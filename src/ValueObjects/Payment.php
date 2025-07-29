@@ -6,7 +6,7 @@ namespace Flowcoders\Maestro\ValueObjects;
 
 use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\PaymentMethod;
-use Flowcoders\Maestro\Contracts\ValueObjects\PaymentMethodInterface;
+use Flowcoders\Maestro\Contracts\PaymentMethodInterface;
 use InvalidArgumentException;
 
 readonly class Payment
@@ -26,32 +26,6 @@ readonly class Payment
         $this->validateAmount($amount);
         $this->validateInstallments($installments);
         $this->validateCustomerRequirements();
-    }
-
-    public static function create(
-        int $amount,
-        Currency $currency,
-        string $description,
-        PaymentMethodInterface $paymentMethod,
-        int $installments = 1,
-        Customer $customer,
-        ?string $externalReference = null,
-        ?array $metadata = null,
-        ?string $notificationUrl = null,
-        ?string $callbackUrl = null,
-    ): self {
-        return new self(
-            amount: $amount,
-            currency: $currency,
-            description: $description,
-            paymentMethod: $paymentMethod,
-            installments: $installments,
-            customer: $customer,
-            externalReference: $externalReference,
-            metadata: $metadata,
-            notificationUrl: $notificationUrl,
-            callbackUrl: $callbackUrl,
-        );
     }
 
     private function validateAmount(int $amount): void

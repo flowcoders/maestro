@@ -10,7 +10,7 @@ use Flowcoders\Maestro\DTOs\RefundPaymentDTO;
 use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\PaymentStatus;
 use DateTimeImmutable;
-use Flowcoders\Maestro\Contracts\ValueObjects\PaymentMethodInterface;
+use Flowcoders\Maestro\Contracts\PaymentMethodInterface;
 use Flowcoders\Maestro\DTOs\AddressDTO;
 use Flowcoders\Maestro\DTOs\CustomerDTO;
 use Flowcoders\Maestro\Enums\PaymentMethod;
