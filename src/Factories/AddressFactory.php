@@ -17,19 +17,23 @@ class AddressFactory
             streetNumber: $addressDTO->streetNumber,
             city: $addressDTO->city,
             state: $addressDTO->state,
+            country: $addressDTO->country,
             neighborhood: $addressDTO->neighborhood,
+            complement: $addressDTO->complement,
         );
     }
 
     public static function toDTO(Address $address): AddressDTO
     {
         return AddressDTO::create(
-            postalCode: $address->postalCode,
+            postalCode: $address->getPostalCodeString(),
             streetName: $address->streetName,
             streetNumber: $address->streetNumber,
             city: $address->city,
             state: $address->state,
+            country: $address->country,
             neighborhood: $address->neighborhood,
+            complement: $address->complement,
         );
     }
 }

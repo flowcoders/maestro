@@ -7,10 +7,10 @@ namespace Flowcoders\Maestro\Adapters;
 use Flowcoders\Maestro\Contracts\HttpClientInterface;
 use Flowcoders\Maestro\Contracts\PaymentMapperInterface;
 use Flowcoders\Maestro\Contracts\PaymentServiceProviderInterface;
-use Flowcoders\Maestro\DTOs\CreatePaymentDTO;
 use Flowcoders\Maestro\DTOs\PaymentResponseDTO;
 use Flowcoders\Maestro\DTOs\RefundPaymentDTO;
 use Flowcoders\Maestro\Exceptions\PaymentException;
+use Flowcoders\Maestro\ValueObjects\Payment;
 
 class MercadoPagoAdapter implements PaymentServiceProviderInterface
 {
@@ -20,10 +20,10 @@ class MercadoPagoAdapter implements PaymentServiceProviderInterface
     ) {
     }
 
-    public function createPayment(CreatePaymentDTO $paymentData): PaymentResponseDTO
+    public function createPayment(Payment $payment): PaymentResponseDTO
     {
         try {
-            $requestData = $this->mapper->mapCreatePaymentRequest($paymentData);
+            $requestData = $this->mapper->mapCreatePaymentRequest($payment);
 
             $response = $this->httpClient->post('/v1/payments', $requestData);
 
