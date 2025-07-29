@@ -24,7 +24,7 @@ class CustomerFactory
 
     public static function toDTO(Customer $customer, ?string $id = null): CustomerDTO
     {
-        return CustomerDTO::create(
+        return new CustomerDTO(
             id: $id,
             email: $customer->getEmailString(),
             firstName: $customer->firstName,

@@ -14,13 +14,6 @@ readonly class PixDTO implements PaymentMethodInterface
     ) {
     }
 
-    public static function create(int $expiresAt): self
-    {
-        return new self(
-            expiresAt: $expiresAt,
-        );
-    }
-
     public function getType(): string
     {
         return PaymentMethod::PIX->value;

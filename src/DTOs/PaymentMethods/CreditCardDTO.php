@@ -21,26 +21,6 @@ readonly class CreditCardDTO implements PaymentMethodInterface
     ) {
     }
 
-    public static function create(
-        ?string $token = null,
-        ?string $bin = null,
-        ?string $holderName = null,
-        ?int $expirationMonth = null,
-        ?int $expirationYear = null,
-        ?CardBrand $brand = null,
-        ?string $lastFourDigits = null,
-    ): self {
-        return new self(
-            token: $token,
-            bin: $bin,
-            holderName: $holderName,
-            expirationMonth: $expirationMonth,
-            expirationYear: $expirationYear,
-            brand: $brand,
-            lastFourDigits: $lastFourDigits,
-        );
-    }
-
     public function getType(): string
     {
         return PaymentMethod::CREDIT_CARD->value;

@@ -19,26 +19,4 @@ readonly class AddressDTO
         public ?string $complement = null,
     ) {
     }
-
-    public static function create(
-        string $postalCode,
-        ?string $streetName = null,
-        ?string $streetNumber = null,
-        ?string $city = null,
-        ?string $state = null,
-        ?Country $country = null,
-        ?string $neighborhood = null,
-        ?string $complement = null,
-    ): self {
-        return new self(
-            postalCode: $postalCode,
-            streetName: $streetName,
-            streetNumber: $streetNumber,
-            city: $city,
-            state: $state,
-            country: $country,
-            neighborhood: $neighborhood,
-            complement: $complement,
-        );
-    }
 }

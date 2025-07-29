@@ -151,14 +151,14 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
 
     private function mapCustomerFromResponse(array $customer): CustomerDTO
     {
-        return CustomerDTO::create(
+        return new CustomerDTO(
             email: $customer['email'],
             firstName: $customer['first_name'],
             lastName: $customer['last_name'],
             document: $customer['identification']['number'],
             documentType: $customer['identification']['type'],
             phone: $customer['phone']['number'],
-            address: $customer['address'] ? AddressDTO::create($customer['address']) : null,
+            address: $customer['address'] ? new AddressDTO($customer['address']) : null,
         );
     }
 }

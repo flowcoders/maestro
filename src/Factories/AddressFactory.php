@@ -25,7 +25,7 @@ class AddressFactory
 
     public static function toDTO(Address $address): AddressDTO
     {
-        return AddressDTO::create(
+        return new AddressDTO(
             postalCode: $address->getPostalCodeString(),
             streetName: $address->streetName,
             streetNumber: $address->streetNumber,

@@ -19,26 +19,4 @@ readonly class CustomerDTO
         public ?AddressDTO $address = null,
     ) {
     }
-
-    public static function create(
-        ?string $id = null,
-        ?string $email = null,
-        ?string $firstName = null,
-        ?string $lastName = null,
-        ?string $document = null,
-        ?DocumentType $documentType = null,
-        ?string $phone = null,
-        ?AddressDTO $address = null,
-    ): self {
-        return new self(
-            id: $id,
-            email: $email,
-            firstName: $firstName,
-            lastName: $lastName,
-            document: $document,
-            documentType: $documentType,
-            phone: $phone,
-            address: $address,
-        );
-    }
 }
