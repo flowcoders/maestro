@@ -122,7 +122,7 @@ it('rejects CPF with all same digits', function (string $cpf) {
 
 dataset('invalid_cpfs', [
     '11144477736', // Valid is 11144477735, changed last digit
-    '52998224726', // Valid is 52998224725, changed last digit  
+    '52998224726', // Valid is 52998224725, changed last digit
     '14434847821', // Valid is 14434847820, changed last digit
     '12345678901', // Known invalid CPF
     '98765432101', // Known invalid CPF
@@ -138,7 +138,7 @@ it('rejects invalid CPF with incorrect check digits', function (string $cpf) {
 dataset('valid_cpfs', [
     '11144477735',
     '52998224725',
-    '83001195070'
+    '83001195070',
 ]);
 
 it('accepts valid CPF numbers', function (string $cpf) {

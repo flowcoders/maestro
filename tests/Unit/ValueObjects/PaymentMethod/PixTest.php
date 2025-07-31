@@ -40,9 +40,9 @@ it('indicates document is required', function () {
 
 it('calculates expiration timestamp correctly', function () {
     $pix = new Pix(expiresAt: 60);
-    
+
     $expectedTimestamp = CarbonImmutable::now()->addMinutes(60)->getTimestamp();
-    
+
     expect($pix->getExpirationTimestamp())->toBe($expectedTimestamp);
 });
 
@@ -58,7 +58,7 @@ it('demonstrates expiration behavior', function () {
 
     // Initially not expired
     expect($pix->isExpired())->toBeFalse();
-    
+
     // The expiration timestamp should be 60 minutes from now
     $expectedTimestamp = CarbonImmutable::now()->addMinutes(60)->getTimestamp();
     expect($pix->getExpirationTimestamp())->toBe($expectedTimestamp);
@@ -119,20 +119,20 @@ it('rejects invalid expiration times', function (int $expiresAt) {
 
 it('handles edge case of exactly 24 hours', function () {
     CarbonImmutable::setTestNow('2024-01-15 00:00:00');
-    
+
     $pix = new Pix(expiresAt: 1440); // 24 hours
-    
+
     expect($pix->getExpirationTimestamp())
         ->toBe(CarbonImmutable::parse('2024-01-16 00:00:00')->getTimestamp());
 });
 
 it('calculates expiration timestamp correctly across date boundaries', function () {
     CarbonImmutable::setTestNow('2024-01-15 23:30:00');
-    
+
     $pix = new Pix(expiresAt: 60); // 1 hour from 23:30 is 00:30 next day
-    
+
     $expectedTimestamp = CarbonImmutable::parse('2024-01-16 00:30:00')->getTimestamp();
-    
+
     expect($pix->getExpirationTimestamp())->toBe($expectedTimestamp);
     expect($pix->isExpired())->toBeFalse();
 });

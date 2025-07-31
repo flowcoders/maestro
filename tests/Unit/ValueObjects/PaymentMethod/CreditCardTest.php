@@ -65,7 +65,7 @@ it('validates expiry dates correctly', function () {
     }
 
     // Test with past year by checking if it throws exception during construction
-    expect(fn() => new CreditCard(expiryYear: 2020, expiryMonth: 12))
+    expect(fn () => new CreditCard(expiryYear: 2020, expiryMonth: 12))
         ->toThrow(InvalidArgumentException::class, 'Expiration year cannot be in the past: 2020');
 
     // Expired - same year, past month
