@@ -20,10 +20,6 @@ readonly class Document
             throw new InvalidArgumentException('Document value cannot be empty.');
         }
 
-        if ($this->type->isCpf() && strlen($this->value) !== 11) {
-            throw new InvalidArgumentException('Invalid CPF length');
-        }
-
         if ($this->type->isCnpj() && strlen($this->value) !== 14) {
             throw new InvalidArgumentException('Invalid CNPJ length');
         }

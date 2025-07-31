@@ -23,11 +23,4 @@ readonly class Phone
             throw new InvalidArgumentException('Phone number must be in E.164 format (e.g., +14155552671).');
         }
     }
-
-    public function countryCode(): string
-    {
-        preg_match('/^\+(\d{1,3})/', $this->number, $matches);
-
-        return $matches[1] ?? '';
-    }
 }

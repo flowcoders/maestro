@@ -4,7 +4,7 @@ namespace Flowcoders\Maestro\Enums;
 
 enum PhoneType: string
 {
-    case Landline = 'LANDLINE';
-    case Mobile = 'MOBILE';
-    case Other = 'OTHER';
+    case LANDLINE = 'LANDLINE';
+    case MOBILE = 'MOBILE';
+    case OTHER = 'OTHER';
 }

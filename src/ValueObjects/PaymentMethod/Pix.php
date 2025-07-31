@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\ValueObjects\PaymentMethod;
 
-use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Flowcoders\Maestro\Contracts\PaymentMethodInterface;
 use Flowcoders\Maestro\Enums\PaymentMethod;
 use InvalidArgumentException;
@@ -17,15 +17,15 @@ readonly class Pix implements PaymentMethodInterface
         $this->validateExpiresAt();
     }
 
-    private function getExpiresAt(): Carbon
+    private function getExpiresAt(): CarbonImmutable
     {
-        return Carbon::now()->addMinutes($this->expiresAt);
+        return CarbonImmutable::now()->addMinutes($this->expiresAt);
     }
 
     private function validateExpiresAt(): void
     {
         $expiresDate = $this->getExpiresAt();
-        $now = Carbon::now();
+        $now = CarbonImmutable::now();
 
         if ($expiresDate <= $now) {
             throw new InvalidArgumentException('PIX expiration date must be in the future');
@@ -50,7 +50,7 @@ readonly class Pix implements PaymentMethodInterface
 
     public function isExpired(): bool
     {
-        return $this->getExpiresAt() <= Carbon::now();
+        return $this->getExpiresAt() <= CarbonImmutable::now();
     }
 
     public function getExpirationTimestamp(): int
