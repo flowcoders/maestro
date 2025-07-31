@@ -7,24 +7,24 @@ namespace Flowcoders\Maestro\ValueObjects\PaymentMethod;
 use Flowcoders\Maestro\Contracts\PaymentMethodInterface;
 use Flowcoders\Maestro\Enums\CardBrand;
 use Flowcoders\Maestro\Enums\PaymentMethod;
-use Illuminate\Contracts\Support\Arrayable;
 use InvalidArgumentException;
 
-readonly class CreditCard implements Arrayable, PaymentMethodInterface
+readonly class CreditCard implements PaymentMethodInterface
 {
     public function __construct(
         public ?string $token = null,
         public ?string $bin = null,
         public ?string $holderName = null,
-        public ?int $expirationMonth = null,
-        public ?int $expirationYear = null,
+        public ?int $expiryMonth = null,
+        public ?int $expiryYear = null,
         public ?CardBrand $brand = null,
         public ?string $lastFourDigits = null,
     ) {
         $this->validateToken($token);
+        $this->validateBin($bin);
         $this->validateHolderName($holderName);
-        $this->validateExpirationMonth($expirationMonth);
-        $this->validateExpirationYear($expirationYear);
+        $this->validateExpiryMonth($expiryMonth);
+        $this->validateExpiryYear($expiryYear);
     }
 
     private function validateToken(?string $token): void
@@ -35,6 +35,21 @@ readonly class CreditCard implements Arrayable, PaymentMethodInterface
 
         if (empty(trim($token))) {
             throw new InvalidArgumentException('Credit card token cannot be empty');
+        }
+    }
+
+    private function validateBin(?string $bin): void
+    {
+        if (is_null($bin)) {
+            return;
+        }
+
+        if (empty(trim($bin))) {
+            throw new InvalidArgumentException('Credit card bin cannot be empty');
+        }
+
+        if (!is_numeric($bin) || strlen($bin) < 6 || strlen($bin) > 8) {
+            throw new InvalidArgumentException('Credit card bin must be a number between 6 and 8 digits');
         }
     }
 
@@ -53,7 +68,7 @@ readonly class CreditCard implements Arrayable, PaymentMethodInterface
         }
     }
 
-    private function validateExpirationMonth(?int $month): void
+    private function validateExpiryMonth(?int $month): void
     {
         if (is_null($month)) {
             return;
@@ -64,7 +79,7 @@ readonly class CreditCard implements Arrayable, PaymentMethodInterface
         }
     }
 
-    private function validateExpirationYear(?int $year): void
+    private function validateExpiryYear(?int $year): void
     {
         if (is_null($year)) {
             return;
@@ -96,28 +111,14 @@ readonly class CreditCard implements Arrayable, PaymentMethodInterface
         $currentYear = (int) date('Y');
         $currentMonth = (int) date('n');
 
-        if ($this->expirationYear < $currentYear) {
+        if ($this->expiryYear < $currentYear) {
             return true;
         }
 
-        if ($this->expirationYear === $currentYear && $this->expirationMonth < $currentMonth) {
+        if ($this->expiryYear === $currentYear && $this->expiryMonth < $currentMonth) {
             return true;
         }
 
         return false;
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'type' => $this->getType(),
-            'token' => $this->token,
-            'bin' => $this->bin,
-            'holder_name' => $this->holderName,
-            'expiration_month' => $this->expirationMonth,
-            'expiration_year' => $this->expirationYear,
-            'brand' => $this->brand?->value,
-            'last_four_digits' => $this->lastFourDigits,
-        ];
     }
 }

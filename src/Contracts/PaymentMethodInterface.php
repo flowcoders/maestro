@@ -8,5 +8,4 @@ interface PaymentMethodInterface
 {
     public function getType(): string;
     public function isDocumentRequired(): bool;
-    public function toArray(): array;
 }

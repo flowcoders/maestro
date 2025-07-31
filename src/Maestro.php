@@ -3,9 +3,8 @@
 namespace Flowcoders\Maestro;
 
 use Flowcoders\Maestro\Contracts\PaymentServiceProviderInterface;
-use Flowcoders\Maestro\DTOs\PaymentDTO;
-use Flowcoders\Maestro\DTOs\PaymentResponseDTO;
-use Flowcoders\Maestro\Factories\PaymentFactory;
+use Flowcoders\Maestro\DTOs\PaymentRequest;
+use Flowcoders\Maestro\DTOs\PaymentResponse;
 use Illuminate\Support\Facades\App;
 
 class Maestro
@@ -22,12 +21,8 @@ class Maestro
         );
     }
 
-    public function createPayment(PaymentDTO $paymentDTO): PaymentResponseDTO
+    public function createPayment(PaymentRequest $paymentRequest): PaymentResponse
     {
-        // Convert DTO to VO at the facade boundary
-        $paymentVO = PaymentFactory::fromDTO($paymentDTO);
-
-        // Pass validated VO to the service provider
-        return $this->paymentProvider->createPayment($paymentVO);
+        return $this->paymentProvider->createPayment($paymentRequest);
     }
 }

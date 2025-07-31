@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\ValueObjects\PaymentMethod;
 
-use DateTimeImmutable;
+use Carbon\Carbon;
 use Flowcoders\Maestro\Contracts\PaymentMethodInterface;
 use Flowcoders\Maestro\Enums\PaymentMethod;
-use Illuminate\Contracts\Support\Arrayable;
 use InvalidArgumentException;
 
-readonly class Pix implements Arrayable, PaymentMethodInterface
+readonly class Pix implements PaymentMethodInterface
 {
     public function __construct(
         public int $expiresAt = 60,
@@ -18,22 +17,22 @@ readonly class Pix implements Arrayable, PaymentMethodInterface
         $this->validateExpiresAt();
     }
 
-    private function getExpiresAt(): DateTimeImmutable
+    private function getExpiresAt(): Carbon
     {
-        return (new DateTimeImmutable())->modify("+{$this->expiresAt} minutes");
+        return Carbon::now()->addMinutes($this->expiresAt);
     }
 
     private function validateExpiresAt(): void
     {
         $expiresDate = $this->getExpiresAt();
-        $now = new DateTimeImmutable();
+        $now = Carbon::now();
 
         if ($expiresDate <= $now) {
             throw new InvalidArgumentException('PIX expiration date must be in the future');
         }
 
         // PIX payments typically expire within 24 hours
-        $maxExpirationTime = $now->modify('+24 hours');
+        $maxExpirationTime = $now->addHours(24);
         if ($expiresDate > $maxExpirationTime) {
             throw new InvalidArgumentException('PIX expiration date cannot be more than 24 hours in the future');
         }
@@ -46,25 +45,16 @@ readonly class Pix implements Arrayable, PaymentMethodInterface
 
     public function isDocumentRequired(): bool
     {
-        return true; // PIX requires document for validation
+        return true;
     }
 
     public function isExpired(): bool
     {
-        return $this->getExpiresAt() <= new DateTimeImmutable();
+        return $this->getExpiresAt() <= Carbon::now();
     }
 
     public function getExpirationTimestamp(): int
     {
         return $this->getExpiresAt()->getTimestamp();
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'type' => $this->getType(),
-            'expires_at' => $this->getExpiresAt()->format('Y-m-d H:i:s'),
-            'expires_at_timestamp' => $this->getExpirationTimestamp(),
-        ];
     }
 }

@@ -7,10 +7,10 @@ namespace Flowcoders\Maestro\Adapters;
 use Flowcoders\Maestro\Contracts\HttpClientInterface;
 use Flowcoders\Maestro\Contracts\PaymentMapperInterface;
 use Flowcoders\Maestro\Contracts\PaymentServiceProviderInterface;
-use Flowcoders\Maestro\DTOs\PaymentResponseDTO;
-use Flowcoders\Maestro\DTOs\RefundPaymentDTO;
+use Flowcoders\Maestro\DTOs\PaymentResponse;
+use Flowcoders\Maestro\DTOs\RefundRequest;
+use Flowcoders\Maestro\DTOs\PaymentRequest;
 use Flowcoders\Maestro\Exceptions\PaymentException;
-use Flowcoders\Maestro\ValueObjects\Payment;
 
 class MercadoPagoAdapter implements PaymentServiceProviderInterface
 {
@@ -20,14 +20,14 @@ class MercadoPagoAdapter implements PaymentServiceProviderInterface
     ) {
     }
 
-    public function createPayment(Payment $payment): PaymentResponseDTO
+    public function createPayment(PaymentRequest $paymentRequest): PaymentResponse
     {
         try {
-            $requestData = $this->mapper->mapCreatePaymentRequest($payment);
+            $requestData = $this->mapper->mapCreatePaymentRequest($paymentRequest);
 
             $response = $this->httpClient->post('/v1/payments', $requestData);
 
-            if (!$response->isSuccessful()) {
+            if (! $response->isSuccessful()) {
                 throw new PaymentException(
                     "Failed to create payment: {$response->error}",
                     $response->statusCode
@@ -46,7 +46,7 @@ class MercadoPagoAdapter implements PaymentServiceProviderInterface
         }
     }
 
-    public function getPayment(string $paymentId): PaymentResponseDTO
+    public function getPayment(string $paymentId): PaymentResponse
     {
         try {
             $response = $this->httpClient->get("/v1/payments/{$paymentId}");
@@ -70,7 +70,7 @@ class MercadoPagoAdapter implements PaymentServiceProviderInterface
         }
     }
 
-    public function cancelPayment(string $paymentId): PaymentResponseDTO
+    public function cancelPayment(string $paymentId): PaymentResponse
     {
         try {
             $response = $this->httpClient->put("/v1/payments/{$paymentId}", [
@@ -96,12 +96,12 @@ class MercadoPagoAdapter implements PaymentServiceProviderInterface
         }
     }
 
-    public function refundPayment(RefundPaymentDTO $refundData): PaymentResponseDTO
+    public function refundPayment(RefundRequest $refundRequest): PaymentResponse
     {
         try {
-            $requestData = $this->mapper->mapRefundPaymentRequest($refundData);
+            $requestData = $this->mapper->mapRefundPaymentRequest($refundRequest);
 
-            $response = $this->httpClient->post("/v1/payments/{$refundData->paymentId}/refunds", $requestData);
+            $response = $this->httpClient->post("/v1/payments/{$refundRequest->paymentId}/refunds", $requestData);
 
             if (!$response->isSuccessful()) {
                 throw new PaymentException(
@@ -111,7 +111,7 @@ class MercadoPagoAdapter implements PaymentServiceProviderInterface
             }
 
             // After refund, get the updated payment status
-            return $this->getPayment($refundData->paymentId);
+            return $this->getPayment($refundRequest->paymentId);
         } catch (PaymentException $exception) {
             throw $exception;
         } catch (\Throwable $exception) {

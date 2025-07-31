@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\Contracts;
 
-use Flowcoders\Maestro\DTOs\PaymentResponseDTO;
-use Flowcoders\Maestro\DTOs\RefundPaymentDTO;
-use Flowcoders\Maestro\ValueObjects\Payment;
+use Flowcoders\Maestro\DTOs\PaymentRequest;
+use Flowcoders\Maestro\DTOs\PaymentResponse;
+use Flowcoders\Maestro\DTOs\RefundRequest;
 
 interface PaymentServiceProviderInterface
 {
-    public function createPayment(Payment $payment): PaymentResponseDTO;
+    public function createPayment(PaymentRequest $paymentRequest): PaymentResponse;
 
-    public function getPayment(string $paymentId): PaymentResponseDTO;
+    public function getPayment(string $paymentId): PaymentResponse;
 
-    public function cancelPayment(string $paymentId): PaymentResponseDTO;
+    public function cancelPayment(string $paymentId): PaymentResponse;
 
-    public function refundPayment(RefundPaymentDTO $refundData): PaymentResponseDTO;
+    public function refundPayment(RefundRequest $refundData): PaymentResponse;
 }

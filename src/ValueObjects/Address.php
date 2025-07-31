@@ -4,71 +4,54 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\ValueObjects;
 
-use Flowcoders\Maestro\Enums\Country;
-use Illuminate\Contracts\Support\Arrayable;
+use Flowcoders\Maestro\Enums\CountryCode;
+use InvalidArgumentException;
 
-readonly class Address implements Arrayable
+readonly class Address
 {
     public function __construct(
-        public PostalCode $postalCode,
-        public ?string $streetName = null,
-        public ?string $streetNumber = null,
-        public ?string $city = null,
-        public ?string $state = null,
-        public ?Country $country = null,
+        public string $postalCode,
+        public string $streetLine1,
+        public string $city,
+        public string $stateOrProvince,
+        public CountryCode $countryCode,
+        public ?string $streetLine2 = null,
         public ?string $neighborhood = null,
         public ?string $complement = null,
     ) {
+        $this->validate();
     }
 
-    public static function create(
-        string $postalCode,
-        ?string $streetName = null,
-        ?string $streetNumber = null,
-        ?string $city = null,
-        ?string $state = null,
-        ?Country $country = null,
-        ?string $neighborhood = null,
-        ?string $complement = null,
-    ): self {
-        return new self(
-            postalCode: new PostalCode($postalCode),
-            streetName: $streetName,
-            streetNumber: $streetNumber,
-            city: $city,
-            state: $state,
-            country: $country,
-            neighborhood: $neighborhood,
-            complement: $complement,
-        );
-    }
-
-    public function toArray(): array
+    private function validate(): void
     {
-        return [
-            'postal_code' => $this->getPostalCodeString(),
-            'street_name' => $this->streetName,
-            'street_number' => $this->streetNumber,
-            'city' => $this->city,
-            'state' => $this->state,
-            'country' => $this->country->value,
-            'neighborhood' => $this->neighborhood,
-            'complement' => $this->complement,
-        ];
+        if (empty($this->streetLine1) || strlen($this->streetLine1) < 2) {
+            throw new InvalidArgumentException('Street line 1 must be at least 2 characters.');
+        }
+
+        if (empty($this->city)) {
+            throw new InvalidArgumentException('City cannot be empty.');
+        }
+
+        if (empty($this->stateOrProvince)) {
+            throw new InvalidArgumentException('State or province cannot be empty.');
+        }
+
+        // Optional: allow postal code to be empty for countries without postal systems
+        if (!empty($this->postalCode) && strlen($this->postalCode) < 3) {
+            throw new InvalidArgumentException('Postal code seems too short.');
+        }
     }
 
-    public function toString(): string
+    public function formatted(): string
     {
-        return $this->postalCode . ' ' . $this->streetName . ' ' . $this->streetNumber . ' ' . $this->city . ' ' . $this->state . ' ' . $this->country->value . ' ' . $this->neighborhood . ' ' . $this->complement;
-    }
+        $parts = array_filter([
+            $this->streetLine1,
+            $this->streetLine2,
+            "{$this->city}" . ($this->stateOrProvince ? ", {$this->stateOrProvince}" : ''),
+            $this->postalCode,
+            $this->countryCode->value,
+        ]);
 
-    public function __toString(): string
-    {
-        return $this->toString();
-    }
-
-    public function getPostalCodeString(): string
-    {
-        return $this->postalCode->toString();
+        return implode(', ', $parts);
     }
 }

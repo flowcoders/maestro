@@ -2,7 +2,8 @@
 
 namespace Flowcoders\Maestro\Enums;
 
-enum Country: string
+// ISO 3166-1 alpha-2
+enum CountryCode: string
 {
     // Americas
     case BR = 'BR'; // Brazil

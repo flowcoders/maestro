@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @see \Flowcoders\Maestro\Contracts\PaymentServiceProviderInterface
  *
- * @method static \Flowcoders\Maestro\DTOs\PaymentResponseDTO createPayment(\Flowcoders\Maestro\ValueObjects\Payment $payment)
- * @method static \Flowcoders\Maestro\DTOs\PaymentResponseDTO getPayment(string $paymentId)
- * @method static \Flowcoders\Maestro\DTOs\PaymentResponseDTO cancelPayment(string $paymentId)
- * @method static \Flowcoders\Maestro\DTOs\PaymentResponseDTO refundPayment(\Flowcoders\Maestro\DTOs\RefundPaymentDTO $refundData)
+ * @method static \Flowcoders\Maestro\DTOs\PaymentResponse createPayment(\Flowcoders\Maestro\DTOs\PaymentRequest $paymentRequest)
+ * @method static \Flowcoders\Maestro\DTOs\PaymentResponse getPayment(string $paymentId)
+ * @method static \Flowcoders\Maestro\DTOs\PaymentResponse cancelPayment(string $paymentId)
+ * @method static \Flowcoders\Maestro\DTOs\PaymentResponse refundPayment(\Flowcoders\Maestro\DTOs\RefundRequest $refundRequest)
  */
 class Maestro extends Facade
 {

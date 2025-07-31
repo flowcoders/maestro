@@ -6,8 +6,8 @@ namespace Flowcoders\Maestro\Enums;
 
 enum PaymentMethod: string
 {
-    case CREDIT_CARD = 'credit_card';
-    case PIX = 'pix';
+    case CREDIT_CARD = 'CREDIT_CARD';
+    case PIX = 'PIX';
 
     public function isCreditCard(): bool
     {

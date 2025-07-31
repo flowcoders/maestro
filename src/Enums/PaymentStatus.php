@@ -6,15 +6,15 @@ namespace Flowcoders\Maestro\Enums;
 
 enum PaymentStatus: string
 {
-    case PENDING = 'pending';
-    case APPROVED = 'approved';
-    case AUTHORIZED = 'authorized';
-    case IN_PROCESS = 'in_process';
-    case IN_MEDIATION = 'in_mediation';
-    case REJECTED = 'rejected';
-    case CANCELED = 'canceled';
-    case REFUNDED = 'refunded';
-    case CHARGED_BACK = 'charged_back';
+    case PENDING = 'PENDING';
+    case APPROVED = 'APPROVED';
+    case AUTHORIZED = 'AUTHORIZED';
+    case IN_PROCESS = 'IN_PROCESS';
+    case IN_MEDIATION = 'IN_MEDIATION';
+    case REJECTED = 'REJECTED';
+    case CANCELED = 'CANCELED';
+    case REFUNDED = 'REFUNDED';
+    case CHARGED_BACK = 'CHARGED_BACK';
 
     public function isPending(): bool
     {

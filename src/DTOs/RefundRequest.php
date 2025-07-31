@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\DTOs;
 
-readonly class RefundPaymentDTO
+readonly class RefundRequest
 {
     public function __construct(
         public string $paymentId,

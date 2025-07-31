@@ -5,64 +5,62 @@ declare(strict_types=1);
 namespace Flowcoders\Maestro\Mappers;
 
 use Flowcoders\Maestro\Contracts\PaymentMapperInterface;
-use Flowcoders\Maestro\DTOs\PaymentResponseDTO;
-use Flowcoders\Maestro\DTOs\RefundPaymentDTO;
 use Flowcoders\Maestro\Enums\Currency;
+use Flowcoders\Maestro\Enums\PaymentMethod;
 use Flowcoders\Maestro\Enums\PaymentStatus;
 use DateTimeImmutable;
 use Flowcoders\Maestro\Contracts\PaymentMethodInterface;
-use Flowcoders\Maestro\DTOs\AddressDTO;
-use Flowcoders\Maestro\DTOs\CustomerDTO;
-use Flowcoders\Maestro\Enums\PaymentMethod;
+use Flowcoders\Maestro\DTOs\Customer;
+use Flowcoders\Maestro\DTOs\PaymentRequest;
+use Flowcoders\Maestro\DTOs\PaymentResponse;
+use Flowcoders\Maestro\DTOs\RefundRequest;
 use Flowcoders\Maestro\ValueObjects\Address;
-use Flowcoders\Maestro\ValueObjects\Customer;
-use Flowcoders\Maestro\ValueObjects\Payment;
 
 class MercadoPagoPaymentMapper implements PaymentMapperInterface
 {
-    public function mapCreatePaymentRequest(Payment $payment): array
+    public function mapCreatePaymentRequest(PaymentRequest $paymentRequest): array
     {
         $data = [
-            'transaction_amount' => $payment->amount / 100, // Convert cents to decimal
-            'description' => $payment->description,
-            'installments' => $payment->installments,
-            'payment_method_id' => $this->mapPaymentMethod($payment->paymentMethod), // TODO: MercadoPago uses some brands as payment_method_id
-            'external_reference' => $payment->externalReference,
-            'notification_url' => $payment->notificationUrl,
-            'callback_url' => $payment->callbackUrl,
+            'transaction_amount' => $paymentRequest->money->amount / 100, // Convert cents to decimal
+            'description' => $paymentRequest->description,
+            'installments' => $paymentRequest->installments,
+            'payment_method_id' => $this->mapPaymentMethod($paymentRequest->paymentMethod), // TODO: MercadoPago uses some brands as payment_method_id
+            'external_reference' => $paymentRequest->externalReference,
+            'notification_url' => $paymentRequest->notificationUrl,
+            'callback_url' => $paymentRequest->callbackUrl,
         ];
 
-        $data['payer'] = $this->mapCustomer($payment->customer);
+        $data['payer'] = $this->mapCustomer($paymentRequest->customer);
 
-        if ($payment->metadata !== null) {
-            $data['metadata'] = $payment->metadata;
+        if ($paymentRequest->metadata !== null) {
+            $data['metadata'] = $paymentRequest->metadata;
         }
 
         return array_filter($data, fn ($value) => $value !== null);
     }
 
-    public function mapRefundPaymentRequest(RefundPaymentDTO $dto): array
+    public function mapRefundPaymentRequest(RefundRequest $refundRequest): array
     {
         $data = [
-            'amount' => $dto->amount !== null ? $dto->amount / 100 : null, // Convert cents to decimal
-            'reason' => $dto->reason,
+            'amount' => $refundRequest->amount !== null ? $refundRequest->amount / 100 : null, // Convert cents to decimal
+            'reason' => $refundRequest->reason,
         ];
 
-        if ($dto->metadata !== null) {
-            $data['metadata'] = $dto->metadata;
+        if ($refundRequest->metadata !== null) {
+            $data['metadata'] = $refundRequest->metadata;
         }
 
         return array_filter($data, fn ($value) => $value !== null);
     }
 
-    public function mapPaymentResponse(array $response): PaymentResponseDTO
+    public function mapPaymentResponse(array $response): PaymentResponse
     {
         $customer = null;
         if (isset($response['payer'])) {
             $customer = $this->mapCustomerFromResponse($response['payer']);
         }
 
-        return new PaymentResponseDTO(
+        return new PaymentResponse(
             id: (string) $response['id'],
             status: $this->mapStatus($response['status']),
             amount: (int) ($response['transaction_amount'] * 100), // Convert to cents
@@ -90,15 +88,15 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
     {
         $data = [
             'id' => $customer->id,
-            'email' => $customer->email,
+            'email' => $customer->email->value,
             'first_name' => $customer->firstName,
             'last_name' => $customer->lastName,
             'phone' => [
-                'number' => $customer->phone,
+                'number' => $customer->phone->number,
             ],
             'identification' => [
-                'type' => $customer->documentType,
-                'number' => $customer->document,
+                'type' => $customer->document->type->value,
+                'number' => $customer->document->value,
             ],
         ];
 
@@ -113,10 +111,10 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
     {
         return array_filter([
             'zip_code' => $address->postalCode,
-            'street_name' => $address->streetName,
-            'street_number' => $address->streetNumber,
+            'street_name' => $address->streetLine1,
+            'street_number' => $address->streetLine2,
             'city' => $address->city,
-            'federal_unit' => $address->state,
+            'federal_unit' => $address->stateOrProvince,
             'neighborhood' => $address->neighborhood,
         ], fn ($value) => $value !== null);
     }
@@ -149,16 +147,12 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
         };
     }
 
-    private function mapCustomerFromResponse(array $customer): CustomerDTO
+    private function mapCustomerFromResponse(array $customer): Customer
     {
-        return new CustomerDTO(
+        return new Customer(
             email: $customer['email'],
             firstName: $customer['first_name'],
             lastName: $customer['last_name'],
-            document: $customer['identification']['number'],
-            documentType: $customer['identification']['type'],
-            phone: $customer['phone']['number'],
-            address: $customer['address'] ? new AddressDTO($customer['address']) : null,
         );
     }
 }

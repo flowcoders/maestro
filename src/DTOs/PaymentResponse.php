@@ -8,7 +8,7 @@ use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\PaymentStatus;
 use DateTimeImmutable;
 
-readonly class PaymentResponseDTO
+readonly class PaymentResponse
 {
     public function __construct(
         public string $id,
@@ -16,7 +16,7 @@ readonly class PaymentResponseDTO
         public int $amount,
         public Currency $currency,
         public ?string $description = null,
-        public ?CustomerDTO $customer = null,
+        public ?Customer $customer = null,
         public ?string $externalReference = null,
         public ?string $paymentMethod = null,
         public ?DateTimeImmutable $createdAt = null,

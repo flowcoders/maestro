@@ -63,7 +63,7 @@ MAESTRO_PAYMENT_PROVIDER=mercadopago
 ```php
 use Flowcoders\Maestro\Facades\Maestro;
 use Flowcoders\Maestro\DTOs\PaymentDTO;
-use Flowcoders\Maestro\DTOs\CustomerDTO;
+use Flowcoders\Maestro\DTOs\Customer;
 use Flowcoders\Maestro\Enums\Currency;
 
 // Create a payment
@@ -71,7 +71,7 @@ $payment = Maestro::createPayment(new PaymentDTO(
     amount: 10000, // Amount in cents (R$ 100.00)
     currency: Currency::BRL,
     description: 'Product purchase',
-    customer: new CustomerDTO(
+    customer: new Customer(
         email: 'customer@example.com',
         firstName: 'John',
         lastName: 'Doe'
