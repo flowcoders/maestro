@@ -17,6 +17,7 @@ readonly class PaymentRequest
         public Customer $customer,
         public int $installments = 1,
         public bool $capture = true,
+        public ?string $token = null,
         public ?string $externalReference = null,
         public ?string $statementDescriptor = null,
         public ?string $notificationUrl = null,

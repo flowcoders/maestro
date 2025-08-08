@@ -14,23 +14,27 @@ use Flowcoders\Maestro\DTOs\Customer;
 use Flowcoders\Maestro\DTOs\PaymentRequest;
 use Flowcoders\Maestro\DTOs\PaymentResponse;
 use Flowcoders\Maestro\DTOs\RefundRequest;
+use Flowcoders\Maestro\Enums\CardBrand;
 use Flowcoders\Maestro\ValueObjects\Address;
+use Flowcoders\Maestro\ValueObjects\PaymentMethod\CreditCard;
+use Flowcoders\Maestro\ValueObjects\PaymentMethod\Pix;
 
 class MercadoPagoPaymentMapper implements PaymentMapperInterface
 {
     public function mapCreatePaymentRequest(PaymentRequest $paymentRequest): array
     {
         $data = [
-            'transaction_amount' => $paymentRequest->money->amount / 100, // Convert cents to decimal
+            'capture' => $paymentRequest->capture,
             'description' => $paymentRequest->description,
-            'installments' => $paymentRequest->installments,
-            'payment_method_id' => $this->mapPaymentMethod($paymentRequest->paymentMethod), // TODO: MercadoPago uses some brands as payment_method_id
+            'transaction_amount' => $paymentRequest->money->amount / 100,
             'external_reference' => $paymentRequest->externalReference,
+            'installments' => $paymentRequest->installments,
             'notification_url' => $paymentRequest->notificationUrl,
-            'callback_url' => $paymentRequest->callbackUrl,
+            'token' => $paymentRequest->token,
         ];
 
         $data['payer'] = $this->mapCustomer($paymentRequest->customer);
+        $data['payment_method_id'] = $this->mapPaymentMethod($paymentRequest->paymentMethod);
 
         if ($paymentRequest->metadata !== null) {
             $data['metadata'] = $paymentRequest->metadata;
@@ -42,7 +46,7 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
     public function mapRefundPaymentRequest(RefundRequest $refundRequest): array
     {
         $data = [
-            'amount' => $refundRequest->amount !== null ? $refundRequest->amount / 100 : null, // Convert cents to decimal
+            'amount' => $refundRequest->amount !== null ? $refundRequest->amount / 100 : null,
             'reason' => $refundRequest->reason,
         ];
 
@@ -119,15 +123,33 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
         ], fn ($value) => $value !== null);
     }
 
-    /**
-     * Mapeia PaymentMethod VO para string do MercadoPago
-     */
     private function mapPaymentMethod(PaymentMethodInterface $paymentMethod): string
     {
+        if ($paymentMethod instanceof Pix) {
+            return 'pix';
+        }
+
+        if ($paymentMethod instanceof CreditCard) {
+            return $this->mapBrand($paymentMethod->brand);
+        }
+
         return match($paymentMethod->getType()) {
             PaymentMethod::PIX->value => 'pix',
             PaymentMethod::CREDIT_CARD->value => 'credit_card',
             default => throw new \InvalidArgumentException("Unsupported payment method: {$paymentMethod->getType()}")
+        };
+    }
+
+    private function mapBrand(CardBrand $brand): string
+    {
+        return match($brand) {
+            CardBrand::AMEX->value => 'amex',
+            CardBrand::ELO->value => 'elo',
+            CardBrand::HIPERCARD->value => 'hipercard',
+            CardBrand::MASTER->value => 'master',
+            CardBrand::VISA->value => 'visa',
+
+            default => throw new \InvalidArgumentException("Unsupported card brand: {$brand->value}")
         };
     }
 

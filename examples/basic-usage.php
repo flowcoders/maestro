@@ -70,7 +70,7 @@ function createBasicPayment(): void
         echo "Payment ID: {$paymentResponse->id}\n";
         echo "Status: {$paymentResponse->status->value}\n";
         echo "Amount: {$paymentResponse->amount} {$paymentResponse->currency->value}\n";
-        echo "Customer: {$paymentResponse->customer?->getFullName()}\n";
+        echo "Customer: {$paymentResponse->customer?->firstName} {$paymentResponse->customer?->lastName}\n";
 
         if ($paymentResponse->hasError()) {
             echo "⚠️ Payment has errors: {$paymentResponse->error}\n";
