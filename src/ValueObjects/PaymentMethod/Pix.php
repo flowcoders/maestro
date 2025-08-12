@@ -17,7 +17,7 @@ readonly class Pix implements PaymentMethodInterface
         $this->validateExpiresAt();
     }
 
-    private function getExpiresAt(): CarbonImmutable
+    public function getExpiresAt(): CarbonImmutable
     {
         return CarbonImmutable::now()->addMinutes($this->expiresAt);
     }

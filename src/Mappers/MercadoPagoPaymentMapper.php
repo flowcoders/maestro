@@ -36,6 +36,10 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
         $data['payer'] = $this->mapCustomer($paymentRequest->customer);
         $data['payment_method_id'] = $this->mapPaymentMethod($paymentRequest->paymentMethod);
 
+        if ($paymentRequest->paymentMethod instanceof Pix) {
+            $data['date_of_expiration'] = $paymentRequest->paymentMethod->getExpiresAt()->format('Y-m-d\TH:i:s.vP');
+        }
+
         if ($paymentRequest->metadata !== null) {
             $data['metadata'] = $paymentRequest->metadata;
         }
