@@ -147,11 +147,11 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
     private function mapBrand(CardBrand $brand): string
     {
         return match($brand) {
-            CardBrand::AMEX->value => 'amex',
-            CardBrand::ELO->value => 'elo',
-            CardBrand::HIPERCARD->value => 'hipercard',
-            CardBrand::MASTER->value => 'master',
-            CardBrand::VISA->value => 'visa',
+            CardBrand::AMEX => 'amex',
+            CardBrand::ELO => 'elo',
+            CardBrand::HIPERCARD => 'hipercard',
+            CardBrand::MASTER => 'master',
+            CardBrand::VISA => 'visa',
 
             default => throw new \InvalidArgumentException("Unsupported card brand: {$brand->value}")
         };

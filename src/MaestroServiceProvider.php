@@ -20,7 +20,6 @@ class MaestroServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        // Register facade alias
         $this->app->alias(PaymentServiceProviderInterface::class, 'maestro');
     }
 
