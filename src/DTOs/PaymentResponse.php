@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\DTOs;
 
-use Flowcoders\Maestro\Enums\Currency;
-use Flowcoders\Maestro\Enums\PaymentStatus;
 use DateTimeImmutable;
+use Flowcoders\Maestro\Enums\PaymentStatus;
+use Flowcoders\Maestro\ValueObjects\Money;
 
 readonly class PaymentResponse
 {
     public function __construct(
         public string $id,
         public PaymentStatus $status,
-        public int $amount,
-        public Currency $currency,
+        public Money $money,
         public ?string $description = null,
         public ?Customer $customer = null,
         public ?string $externalReference = null,
@@ -26,15 +25,5 @@ readonly class PaymentResponse
         public ?string $error = null,
         public ?string $errorCode = null,
     ) {
-    }
-
-    public function isSuccessful(): bool
-    {
-        return $this->error === null;
-    }
-
-    public function hasError(): bool
-    {
-        return $this->error !== null;
     }
 }

@@ -11,14 +11,14 @@ use Illuminate\Http\Client\Factory;
 use Illuminate\Http\Client\Response;
 use Throwable;
 
-class BaseHttpClient implements HttpClientInterface
+readonly class BaseHttpClient implements HttpClientInterface
 {
     public function __construct(
-        private readonly Factory $httpFactory,
-        private readonly string $baseUrl,
-        private readonly array $defaultHeaders = [],
-        private readonly int $timeout = 30,
-        private readonly ?string $bearerToken = null,
+        private Factory $httpFactory,
+        private string $baseUrl,
+        private array $defaultHeaders = [],
+        private int $timeout = 30,
+        private ?string $bearerToken = null,
     ) {
     }
 

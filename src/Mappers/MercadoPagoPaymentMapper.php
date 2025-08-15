@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\Mappers;
 
+use DateTimeImmutable;
 use Flowcoders\Maestro\Contracts\PaymentMapperInterface;
 use Flowcoders\Maestro\Enums\Currency;
+use Flowcoders\Maestro\Enums\DocumentType;
 use Flowcoders\Maestro\Enums\PaymentMethod;
 use Flowcoders\Maestro\Enums\PaymentStatus;
-use DateTimeImmutable;
 use Flowcoders\Maestro\Contracts\PaymentMethodInterface;
 use Flowcoders\Maestro\DTOs\Customer;
 use Flowcoders\Maestro\DTOs\PaymentRequest;
@@ -16,6 +17,8 @@ use Flowcoders\Maestro\DTOs\PaymentResponse;
 use Flowcoders\Maestro\DTOs\RefundRequest;
 use Flowcoders\Maestro\Enums\CardBrand;
 use Flowcoders\Maestro\ValueObjects\Address;
+use Flowcoders\Maestro\ValueObjects\Document;
+use Flowcoders\Maestro\ValueObjects\Money;
 use Flowcoders\Maestro\ValueObjects\PaymentMethod\CreditCard;
 use Flowcoders\Maestro\ValueObjects\PaymentMethod\Pix;
 
@@ -68,11 +71,15 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
             $customer = $this->mapCustomerFromResponse($response['payer']);
         }
 
+        $money = new Money(
+            amount: (int) ($response['transaction_amount'] * 100),
+            currency: Currency::from($response['currency_id']),
+        );
+
         return new PaymentResponse(
             id: (string) $response['id'],
             status: $this->mapStatus($response['status']),
-            amount: (int) ($response['transaction_amount'] * 100), // Convert to cents
-            currency: Currency::from($response['currency_id']),
+            money: $money,
             description: $response['description'] ?? null,
             customer: $customer,
             externalReference: $response['external_reference'] ?? null,
@@ -175,10 +182,15 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
 
     private function mapCustomerFromResponse(array $customer): Customer
     {
+        $document = new Document(
+            type: DocumentType::from($customer['identification']['type']),
+            value: $customer['identification']['number'],
+        );
+
         return new Customer(
+            id: $customer['id'],
             email: $customer['email'],
-            firstName: $customer['first_name'],
-            lastName: $customer['last_name'],
+            document: $document,
         );
     }
 }

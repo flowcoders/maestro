@@ -12,10 +12,10 @@ use Flowcoders\Maestro\ValueObjects\Phone;
 readonly class Customer
 {
     public function __construct(
-        public string $firstName,
-        public string $lastName,
-        public Email $email,
         public ?string $id = null,
+        public ?string $firstName = null,
+        public ?string $lastName = null,
+        public ?Email $email = null,
         public ?Document $document = null,
         public ?Phone $phone = null,
         public ?Address $address = null,
