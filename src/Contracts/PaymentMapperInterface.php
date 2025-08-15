@@ -10,7 +10,7 @@ use Flowcoders\Maestro\DTOs\PaymentRequest;
 
 interface PaymentMapperInterface
 {
-    public function mapCreatePaymentRequest(PaymentRequest $paymentRequest): array;
+    public function mapPaymentRequest(PaymentRequest $paymentRequest): array;
     public function mapRefundPaymentRequest(RefundRequest $refundRequest): array;
     public function mapPaymentResponse(array $response): PaymentResponse;
 }

@@ -7,10 +7,10 @@ use Flowcoders\Maestro\DTOs\PaymentRequest;
 use Flowcoders\Maestro\DTOs\PaymentResponse;
 use Illuminate\Support\Facades\App;
 
-class Maestro
+readonly class Maestro
 {
     public function __construct(
-        private readonly PaymentServiceProviderInterface $paymentProvider
+        private PaymentServiceProviderInterface $paymentProvider
     ) {
     }
 

@@ -24,7 +24,7 @@ use Flowcoders\Maestro\ValueObjects\PaymentMethod\Pix;
 
 class MercadoPagoPaymentMapper implements PaymentMapperInterface
 {
-    public function mapCreatePaymentRequest(PaymentRequest $paymentRequest): array
+    public function mapPaymentRequest(PaymentRequest $paymentRequest): array
     {
         $data = [
             'capture' => $paymentRequest->capture,
@@ -78,23 +78,27 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
 
         return new PaymentResponse(
             id: (string) $response['id'],
-            status: $this->mapStatus($response['status']),
+            status: $this->mapStatusFromResponse($response['status']),
             money: $money,
             description: $response['description'] ?? null,
             customer: $customer,
             externalReference: $response['external_reference'] ?? null,
             paymentMethod: $response['payment_method_id'] ?? null,
-            createdAt: isset($response['date_created'])
-                ? new DateTimeImmutable($response['date_created'])
-                : null,
-            updatedAt: isset($response['date_last_updated'])
-                ? new DateTimeImmutable($response['date_last_updated'])
-                : null,
+            capture: $response['captured'] ?? null,
+            statementDescriptor: $response['statement_descriptor'] ?? null,
+            installments: $response['installments'] ?? null,
+            notificationUrl: $response['notification_url'] ?? null,
             metadata: $response['metadata'] ?? null,
             pspResponse: $response,
             error: $response['status_detail'] ?? null,
             errorCode: isset($response['status']) && $response['status'] === 'rejected'
                 ? $response['status_detail']
+                : null,
+            createdAt: isset($response['date_created'])
+                ? new DateTimeImmutable($response['date_created'])
+                : null,
+            updatedAt: isset($response['date_last_updated'])
+                ? new DateTimeImmutable($response['date_last_updated'])
                 : null,
         );
     }
@@ -164,15 +168,14 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
         };
     }
 
-    private function mapStatus(string $status): PaymentStatus
+    private function mapStatusFromResponse(string $status): PaymentStatus
     {
         return match ($status) {
-            'pending' => PaymentStatus::PENDING,
             'approved' => PaymentStatus::APPROVED,
             'authorized' => PaymentStatus::AUTHORIZED,
             'in_process' => PaymentStatus::IN_PROCESS,
-            'in_mediation' => PaymentStatus::IN_MEDIATION,
-            'rejected' => PaymentStatus::REJECTED,
+            'in_dispute' => PaymentStatus::IN_DISPUTE,
+            'rejected' => PaymentStatus::REFUSED,
             'canceled' => PaymentStatus::CANCELED,
             'refunded' => PaymentStatus::REFUNDED,
             'charged_back' => PaymentStatus::CHARGED_BACK,

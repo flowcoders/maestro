@@ -12,18 +12,18 @@ use Flowcoders\Maestro\DTOs\RefundRequest;
 use Flowcoders\Maestro\DTOs\PaymentRequest;
 use Flowcoders\Maestro\Exceptions\PaymentException;
 
-class MercadoPagoAdapter implements PaymentServiceProviderInterface
+readonly class MercadoPagoAdapter implements PaymentServiceProviderInterface
 {
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
-        private readonly PaymentMapperInterface $mapper,
+        private HttpClientInterface $httpClient,
+        private PaymentMapperInterface $mapper,
     ) {
     }
 
     public function createPayment(PaymentRequest $paymentRequest): PaymentResponse
     {
         try {
-            $requestData = $this->mapper->mapCreatePaymentRequest($paymentRequest);
+            $requestData = $this->mapper->mapPaymentRequest($paymentRequest);
 
             $response = $this->httpClient->post('/v1/payments', $requestData);
 

@@ -10,8 +10,8 @@ enum PaymentStatus: string
     case APPROVED = 'APPROVED';
     case AUTHORIZED = 'AUTHORIZED';
     case IN_PROCESS = 'IN_PROCESS';
-    case IN_MEDIATION = 'IN_MEDIATION';
-    case REJECTED = 'REJECTED';
+    case IN_DISPUTE = 'IN_DISPUTE';
+    case REFUSED = 'REFUSED';
     case CANCELED = 'CANCELED';
     case REFUNDED = 'REFUNDED';
     case CHARGED_BACK = 'CHARGED_BACK';
@@ -36,14 +36,14 @@ enum PaymentStatus: string
         return $this === self::IN_PROCESS;
     }
 
-    public function isInMediation(): bool
+    public function isInDispute(): bool
     {
-        return $this === self::IN_MEDIATION;
+        return $this === self::IN_DISPUTE;
     }
 
-    public function isRejected(): bool
+    public function isRefused(): bool
     {
-        return $this === self::REJECTED;
+        return $this === self::REFUSED;
     }
 
     public function isCanceled(): bool

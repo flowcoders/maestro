@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Flowcoders\Maestro\DTOs;
 
 use DateTimeImmutable;
+use Flowcoders\Maestro\Contracts\PaymentMethodInterface;
 use Flowcoders\Maestro\Enums\PaymentStatus;
 use Flowcoders\Maestro\ValueObjects\Money;
 
@@ -17,13 +18,17 @@ readonly class PaymentResponse
         public ?string $description = null,
         public ?Customer $customer = null,
         public ?string $externalReference = null,
-        public ?string $paymentMethod = null,
-        public ?DateTimeImmutable $createdAt = null,
-        public ?DateTimeImmutable $updatedAt = null,
+        public ?PaymentMethodInterface $paymentMethod = null,
+        public ?bool $capture = null,
+        public ?string $statementDescriptor = null,
+        public ?int $installments = null,
+        public ?string $notificationUrl = null,
         public ?array $metadata = null,
         public ?array $pspResponse = null,
         public ?string $error = null,
         public ?string $errorCode = null,
+        public ?DateTimeImmutable $createdAt = null,
+        public ?DateTimeImmutable $updatedAt = null,
     ) {
     }
 }
