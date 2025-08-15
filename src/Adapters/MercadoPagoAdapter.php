@@ -25,7 +25,11 @@ readonly class MercadoPagoAdapter implements PaymentServiceProviderInterface
         try {
             $requestData = $this->mapper->mapPaymentRequest($paymentRequest);
 
-            $response = $this->httpClient->post('/v1/payments', $requestData);
+            $headers = [
+                'X-Idempotency-Key' => $this->generateIdempotencyKey($paymentRequest),
+            ];
+
+            $response = $this->httpClient->post('/v1/payments', $requestData, $headers);
 
             if (! $response->isSuccessful()) {
                 throw new PaymentException(
@@ -101,7 +105,12 @@ readonly class MercadoPagoAdapter implements PaymentServiceProviderInterface
         try {
             $requestData = $this->mapper->mapRefundPaymentRequest($refundRequest);
 
-            $response = $this->httpClient->post("/v1/payments/{$refundRequest->paymentId}/refunds", $requestData);
+            // MercadoPago requires X-Idempotency-Key to prevent duplicate refunds
+            $headers = [
+                'X-Idempotency-Key' => $this->generateRefundIdempotencyKey($refundRequest),
+            ];
+
+            $response = $this->httpClient->post("/v1/payments/{$refundRequest->paymentId}/refunds", $requestData, $headers);
 
             if (!$response->isSuccessful()) {
                 throw new PaymentException(
@@ -121,5 +130,38 @@ readonly class MercadoPagoAdapter implements PaymentServiceProviderInterface
                 $exception
             );
         }
+    }
+
+    private function generateIdempotencyKey(PaymentRequest $paymentRequest): string
+    {
+        if ($paymentRequest->idempotencyKey !== null) {
+            return $paymentRequest->idempotencyKey;
+        }
+
+        $data = [
+            $paymentRequest->externalReference ?? '',
+            $paymentRequest->money->amount,
+            $paymentRequest->money->currency->value,
+            $paymentRequest->customer?->email?->address ?? '',
+            $paymentRequest->description,
+        ];
+
+        return hash('sha256', implode('|', $data));
+    }
+
+    private function generateRefundIdempotencyKey(RefundRequest $refundRequest): string
+    {
+        if ($refundRequest->idempotencyKey !== null) {
+            return $refundRequest->idempotencyKey;
+        }
+
+        $data = [
+            'refund',
+            $refundRequest->paymentId,
+            $refundRequest->amount ?? 'full',
+            $refundRequest->reason ?? '',
+        ];
+
+        return hash('sha256', implode('|', $data));
     }
 }

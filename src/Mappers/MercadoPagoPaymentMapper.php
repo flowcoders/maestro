@@ -111,18 +111,23 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
     private function mapCustomer(Customer $customer): array
     {
         $data = [
-            'id' => $customer->id,
+            'type' => 'customer',
             'email' => $customer->email->value,
             'first_name' => $customer->firstName,
             'last_name' => $customer->lastName,
-            'phone' => [
-                'number' => $customer->phone->number,
-            ],
             'identification' => [
                 'type' => $customer->document->type->value,
                 'number' => $customer->document->value,
             ],
         ];
+
+        if ($customer->id !== null) {
+            $data['id'] = $customer->id;
+        }
+
+        if ($customer->phone !== null) {
+            $data['phone'] = $customer->phone->number;
+        }
 
         if ($customer->address !== null) {
             $data['address'] = $this->mapAddress($customer->address);
@@ -138,8 +143,6 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
             'street_name' => $address->streetLine1,
             'street_number' => $address->streetLine2,
             'city' => $address->city,
-            'federal_unit' => $address->stateOrProvince,
-            'neighborhood' => $address->neighborhood,
         ], fn ($value) => $value !== null);
     }
 

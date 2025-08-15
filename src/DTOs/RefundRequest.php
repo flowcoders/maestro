@@ -11,6 +11,7 @@ readonly class RefundRequest
         public ?int $amount = null,
         public ?string $reason = null,
         public ?array $metadata = null,
+        public ?string $idempotencyKey = null,
     ) {
     }
 }

@@ -26,17 +26,17 @@ function createBasicPayment(): void
     $address = new Address(
         postalCode: '01234-567',
         streetLine1: 'Rua das Flores',
-        streetLine2: '123',
         city: 'São Paulo',
         stateOrProvince: 'SP',
         countryCode: CountryCode::BR,
+        streetLine2: '123',
         neighborhood: 'Centro'
     );
 
     $customer = new Customer(
-        email: $email,
         firstName: 'João',
         lastName: 'Silva',
+        email: $email,
         document: $document,
         phone: $phone,
         address: $address
@@ -51,9 +51,9 @@ function createBasicPayment(): void
         money: $money,
         paymentMethod: $pix,
         description: 'Compra de produto no e-commerce',
+        customer: $customer,
         installments: 1,
         capture: true,
-        customer: $customer,
         externalReference: 'ORDER-12345',
         notificationUrl: 'https://your-app.com/webhooks/maestro',
         callbackUrl: 'https://your-app.com/payment/success',
@@ -69,7 +69,7 @@ function createBasicPayment(): void
         echo "✅ Payment created successfully!\n";
         echo "Payment ID: {$paymentResponse->id}\n";
         echo "Status: {$paymentResponse->status->value}\n";
-        echo "Amount: {$paymentResponse->amount} {$paymentResponse->currency->value}\n";
+        echo "Amount: {$paymentResponse->money->amount} {$paymentResponse->money->currency->value}\n";
         echo "Customer: {$paymentResponse->customer?->firstName} {$paymentResponse->customer?->lastName}\n";
 
         if ($paymentResponse->hasError()) {

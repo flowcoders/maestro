@@ -23,6 +23,7 @@ readonly class PaymentRequest
         public ?string $notificationUrl = null,
         public ?string $callbackUrl = null,
         public ?array $metadata = null,
+        public ?string $idempotencyKey = null,
     ) {
         $this->validateInstallments($installments);
     }

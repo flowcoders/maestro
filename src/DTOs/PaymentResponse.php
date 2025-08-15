@@ -31,4 +31,9 @@ readonly class PaymentResponse
         public ?CarbonImmutable $updatedAt = null,
     ) {
     }
+
+    public function hasError(): bool
+    {
+        return $this->error !== null;
+    }
 }
