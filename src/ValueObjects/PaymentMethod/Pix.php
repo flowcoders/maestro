@@ -13,6 +13,11 @@ readonly class Pix implements PaymentMethodInterface
 {
     public function __construct(
         public int $expiresAt = 60,
+        public ?string $qrCode = null,
+        public ?string $qrCodeBase64 = null,
+        public ?string $qrCodeUrl = null,
+        public ?string $qrCodeImage = null,
+        public ?string $qrCodeImageBase64 = null,
     ) {
         $this->validateExpiresAt();
     }

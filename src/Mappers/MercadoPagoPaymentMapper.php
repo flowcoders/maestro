@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\Mappers;
 
-use DateTimeImmutable;
+use Carbon\CarbonImmutable;
 use Flowcoders\Maestro\Contracts\PaymentMapperInterface;
 use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\DocumentType;
@@ -76,6 +76,11 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
             currency: Currency::from($response['currency_id']),
         );
 
+        $paymentMethod = null;
+        if (isset($response['payment_method_id'])) {
+            $paymentMethod = $this->mapPaymentMethodFromResponse($response);
+        }
+
         return new PaymentResponse(
             id: (string) $response['id'],
             status: $this->mapStatusFromResponse($response['status']),
@@ -83,7 +88,7 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
             description: $response['description'] ?? null,
             customer: $customer,
             externalReference: $response['external_reference'] ?? null,
-            paymentMethod: $response['payment_method_id'] ?? null,
+            paymentMethod: $paymentMethod,
             capture: $response['captured'] ?? null,
             statementDescriptor: $response['statement_descriptor'] ?? null,
             installments: $response['installments'] ?? null,
@@ -95,10 +100,10 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
                 ? $response['status_detail']
                 : null,
             createdAt: isset($response['date_created'])
-                ? new DateTimeImmutable($response['date_created'])
+                ? new CarbonImmutable($response['date_created'])
                 : null,
             updatedAt: isset($response['date_last_updated'])
-                ? new DateTimeImmutable($response['date_last_updated'])
+                ? new CarbonImmutable($response['date_last_updated'])
                 : null,
         );
     }
@@ -180,6 +185,74 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
             'refunded' => PaymentStatus::REFUNDED,
             'charged_back' => PaymentStatus::CHARGED_BACK,
             default => PaymentStatus::PENDING,
+        };
+    }
+
+    private function mapPaymentMethodFromResponse(array $response): ?PaymentMethodInterface
+    {
+        $paymentTypeId = $response['payment_type_id'] ?? null;
+
+        if ($paymentTypeId === null) {
+            return null;
+        }
+
+        if ($paymentTypeId === 'bank_transfer' && $response['payment_method_id'] === 'pix') {
+            $expiresAt = $this->calculatePixExpirationInMinutes($response['date_of_expiration'] ?? null);
+            $qrCode = data_get($response, 'point_of_interaction.transaction_data.qr_code');
+            $qrCodeBase64 = data_get($response, 'point_of_interaction.transaction_data.qr_code_base64');
+            $qrCodeUrl = data_get($response, 'point_of_interaction.transaction_data.ticket_url');
+
+            return new Pix(
+                expiresAt: $expiresAt,
+                qrCode: $qrCode,
+                qrCodeBase64: $qrCodeBase64,
+                qrCodeUrl: $qrCodeUrl
+            );
+        }
+
+        if (in_array($paymentTypeId, ['credit_card', 'debit_card', 'prepaid_card'])) {
+            $paymentMethodId = $response['payment_method_id'] ?? null;
+            $cardBrand = $paymentMethodId ? $this->mapBrandFromResponse($paymentMethodId) : null;
+
+            return new CreditCard(
+                holderName: $response['card']['cardholder']['name'] ?? null,
+                expiryMonth: $response['card']['expiration_month'] ?? null,
+                expiryYear: $response['card']['expiration_year'] ?? null,
+                brand: $cardBrand,
+                lastFourDigits: $response['card']['last_four_digits'] ?? null,
+            );
+        }
+
+        return null;
+    }
+
+    private function calculatePixExpirationInMinutes(?string $dateOfExpiration): int
+    {
+        if ($dateOfExpiration === null) {
+            throw new \InvalidArgumentException('Date of expiration is required for PIX payment method');
+        }
+
+        try {
+            $expirationDate = CarbonImmutable::parse($dateOfExpiration);
+            $now = CarbonImmutable::now();
+
+            $minutesUntilExpiration = $now->diffInMinutes($expirationDate);
+
+            return (int) $minutesUntilExpiration;
+        } catch (\Exception $e) {
+            throw new \InvalidArgumentException("Invalid date format for PIX expiration: {$dateOfExpiration}");
+        }
+    }
+
+    private function mapBrandFromResponse(string $paymentMethodId): ?CardBrand
+    {
+        return match($paymentMethodId) {
+            'amex' => CardBrand::AMEX,
+            'elo' => CardBrand::ELO,
+            'hipercard' => CardBrand::HIPERCARD,
+            'master' => CardBrand::MASTER,
+            'visa' => CardBrand::VISA,
+            default => null,
         };
     }
 
