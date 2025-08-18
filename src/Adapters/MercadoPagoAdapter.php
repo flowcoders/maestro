@@ -10,6 +10,7 @@ use Flowcoders\Maestro\Contracts\PaymentServiceProviderInterface;
 use Flowcoders\Maestro\DTOs\PaymentResponse;
 use Flowcoders\Maestro\DTOs\RefundRequest;
 use Flowcoders\Maestro\DTOs\PaymentRequest;
+use Flowcoders\Maestro\DTOs\RefundResponse;
 use Flowcoders\Maestro\Exceptions\PaymentException;
 
 readonly class MercadoPagoAdapter implements PaymentServiceProviderInterface
@@ -100,12 +101,11 @@ readonly class MercadoPagoAdapter implements PaymentServiceProviderInterface
         }
     }
 
-    public function refundPayment(RefundRequest $refundRequest): PaymentResponse
+    public function refundPayment(RefundRequest $refundRequest): RefundResponse
     {
         try {
             $requestData = $this->mapper->mapRefundPaymentRequest($refundRequest);
 
-            // MercadoPago requires X-Idempotency-Key to prevent duplicate refunds
             $headers = [
                 'X-Idempotency-Key' => $this->generateRefundIdempotencyKey($refundRequest),
             ];
@@ -119,8 +119,7 @@ readonly class MercadoPagoAdapter implements PaymentServiceProviderInterface
                 );
             }
 
-            // After refund, get the updated payment status
-            return $this->getPayment($refundRequest->paymentId);
+            return $this->mapper->mapRefundResponse($response->data);
         } catch (PaymentException $exception) {
             throw $exception;
         } catch (\Throwable $exception) {

@@ -7,6 +7,7 @@ namespace Flowcoders\Maestro\Contracts;
 use Flowcoders\Maestro\DTOs\PaymentRequest;
 use Flowcoders\Maestro\DTOs\PaymentResponse;
 use Flowcoders\Maestro\DTOs\RefundRequest;
+use Flowcoders\Maestro\DTOs\RefundResponse;
 
 interface PaymentServiceProviderInterface
 {
@@ -16,5 +17,5 @@ interface PaymentServiceProviderInterface
 
     public function cancelPayment(string $paymentId): PaymentResponse;
 
-    public function refundPayment(RefundRequest $refundData): PaymentResponse;
+    public function refundPayment(RefundRequest $refundRequest): RefundResponse;
 }

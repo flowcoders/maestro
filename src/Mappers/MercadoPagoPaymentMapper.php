@@ -6,6 +6,7 @@ namespace Flowcoders\Maestro\Mappers;
 
 use Carbon\CarbonImmutable;
 use Flowcoders\Maestro\Contracts\PaymentMapperInterface;
+use Flowcoders\Maestro\DTOs\RefundResponse;
 use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\DocumentType;
 use Flowcoders\Maestro\Enums\PaymentMethod;
@@ -16,6 +17,7 @@ use Flowcoders\Maestro\DTOs\PaymentRequest;
 use Flowcoders\Maestro\DTOs\PaymentResponse;
 use Flowcoders\Maestro\DTOs\RefundRequest;
 use Flowcoders\Maestro\Enums\CardBrand;
+use Flowcoders\Maestro\Enums\RefundStatus;
 use Flowcoders\Maestro\ValueObjects\Address;
 use Flowcoders\Maestro\ValueObjects\Document;
 use Flowcoders\Maestro\ValueObjects\Money;
@@ -53,12 +55,11 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
     public function mapRefundPaymentRequest(RefundRequest $refundRequest): array
     {
         $data = [
-            'amount' => $refundRequest->amount !== null ? $refundRequest->amount / 100 : null,
-            'reason' => $refundRequest->reason,
+            'id' => $refundRequest->paymentId,
         ];
 
-        if ($refundRequest->metadata !== null) {
-            $data['metadata'] = $refundRequest->metadata;
+        if ($refundRequest->money !== null) {
+            $data['amount'] = $refundRequest->money->amount / 100;
         }
 
         return array_filter($data, fn ($value) => $value !== null);
@@ -104,6 +105,26 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
                 : null,
             updatedAt: isset($response['date_last_updated'])
                 ? new CarbonImmutable($response['date_last_updated'])
+                : null,
+        );
+    }
+
+    public function mapRefundResponse(array $response): RefundResponse
+    {
+        return new RefundResponse(
+            id: (string) $response['id'],
+            paymentId: (string) $response['payment_id'],
+            amount:(int) ($response['amount'] * 100),
+            status: $this->mapStatusFromRefundResponse($response['status']),
+            reason: $response['reason'] ?? null,
+            metadata: $response['metadata'] ?? null,
+            pspResponse: $response,
+            error: $response['status_detail'] ?? null,
+            errorCode: isset($response['status']) && $response['status'] === 'rejected'
+                ? $response['status_detail']
+                : null,
+            createdAt: isset($response['date_created'])
+                ? new CarbonImmutable($response['date_created'])
                 : null,
         );
     }
@@ -188,6 +209,17 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
             'refunded' => PaymentStatus::REFUNDED,
             'charged_back' => PaymentStatus::CHARGED_BACK,
             default => PaymentStatus::PENDING,
+        };
+    }
+
+    private function mapStatusFromRefundResponse(string $status): RefundStatus
+    {
+        return match ($status) {
+            'approved' => RefundStatus::APPROVED,
+            'in_process' => RefundStatus::IN_PROCESS,
+            'rejected' => RefundStatus::REJECTED,
+            'canceled' => RefundStatus::CANCELED,
+            default => RefundStatus::PENDING,
         };
     }
 
