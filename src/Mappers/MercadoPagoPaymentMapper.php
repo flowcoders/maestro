@@ -62,7 +62,7 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
             $data['amount'] = $refundRequest->money->amount / 100;
         }
 
-        return array_filter($data, fn ($value) => $value !== null);
+        return array_filter($data, fn ($value) => $value != null);
     }
 
     public function mapPaymentResponse(array $response): PaymentResponse
