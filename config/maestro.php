@@ -32,6 +32,13 @@ return [
             // Environment is determined by token prefix (TEST- or APP-)
         ],
 
+        'asaas' => [
+            // For production use: https://api.asaas.com/v3
+            // For sandbox use: https://api-sandbox.asaas.com/v3
+            'base_url' => env('ASAAS_BASE_URL', 'https://api-sandbox.asaas.com/v3'),
+            'access_token' => env('ASAAS_ACCESS_TOKEN'),
+        ],
+
         // Add more providers here as needed
         // 'adyen' => [
         //     'api_key' => env('ADYEN_API_KEY'),
