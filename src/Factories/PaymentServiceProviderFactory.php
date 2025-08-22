@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\Factories;
 
-use Flowcoders\Maestro\Adapters\MercadoPagoAdapter;
-use Flowcoders\Maestro\Contracts\PaymentServiceProviderInterface;
-use Flowcoders\Maestro\Exceptions\MaestroException;
-use Flowcoders\Maestro\Http\BaseHttpClient;
-use Flowcoders\Maestro\Mappers\MercadoPagoPaymentMapper;
-use Illuminate\Http\Client\Factory as HttpFactory;
 use InvalidArgumentException;
+use Flowcoders\Maestro\Http\BaseHttpClient;
+use Flowcoders\Maestro\Adapters\AsaasAdapter;
+use Illuminate\Http\Client\Factory as HttpFactory;
+use Flowcoders\Maestro\Adapters\MercadoPagoAdapter;
+use Flowcoders\Maestro\Exceptions\MaestroException;
+use Flowcoders\Maestro\Mappers\MercadoPagoPaymentMapper;
+use Flowcoders\Maestro\Mappers\AsaasPaymentMapper;
+use Flowcoders\Maestro\Contracts\PaymentServiceProviderInterface;
 
 class PaymentServiceProviderFactory
 {
@@ -23,6 +25,7 @@ class PaymentServiceProviderFactory
     {
         return match ($provider) {
             'mercadopago' => $this->createMercadoPagoAdapter($credentials),
+            'asaas' => $this->createAsaasAdapter($credentials),
             default => throw new InvalidArgumentException("Unsupported payment provider: {$provider}"),
         };
     }
@@ -52,6 +55,49 @@ class PaymentServiceProviderFactory
             httpClient: $httpClient,
             mapper: $mapper
         );
+    }
+
+    private function createAsaasAdapter(array $credentials): AsaasAdapter
+    {
+        $this->validateAsaasCredentials($credentials);
+
+        // Asaas API uses /v3 as part of the base URL
+        // Example: https://api.asaas.com/v3 or https://api-sandbox.asaas.com/v3
+        $baseUrl = rtrim($credentials['base_url'], '/');
+        if (!str_ends_with($baseUrl, '/v3')) {
+            $baseUrl .= '/v3';
+        }
+
+        $accessToken = $credentials['access_token'];
+
+        $httpClient = new BaseHttpClient(
+            httpFactory: $this->httpFactory,
+            baseUrl: $baseUrl,
+            defaultHeaders: [
+                'Content-Type' => 'application/json',
+                'User-Agent' => 'Maestro-PHP-SDK/1.0',
+            ],
+            timeout: 30,
+            bearerToken: $accessToken
+        );
+
+        $mapper = new AsaasPaymentMapper();
+
+        return new AsaasAdapter(
+            httpClient: $httpClient,
+            mapper: $mapper
+        );
+    }
+
+    private function validateAsaasCredentials(array $credentials): void
+    {
+        if (!isset($credentials['access_token']) || empty($credentials['access_token'])) {
+            throw new MaestroException('Asaas access_token is required');
+        }
+
+        if (!isset($credentials['base_url']) || empty($credentials['base_url'])) {
+            throw new MaestroException('Asaas base_url is required');
+        }
     }
 
     private function validateMercadoPagoCredentials(array $credentials): void
