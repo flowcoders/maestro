@@ -1,173 +1,141 @@
-# Maestro - Payment Service Provider Integration
+# Maestro - Unified Payment Gateway for Laravel
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/flowcoders/maestro.svg?style=flat-square)](https://packagist.org/packages/flowcoders/maestro)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/flowcoders/maestro/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/flowcoders/maestro/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/flowcoders/maestro/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/flowcoders/maestro/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/flowcoders/maestro.svg?style=flat-square)](https://packagist.org/packages/flowcoders/maestro)
 
-Maestro is a Laravel package that provides a unified interface for integrating multiple Payment Service Providers (PSPs). Built with SOLID principles and the Adapter pattern, it allows you to switch between different payment providers without changing your application code.
+**Stop rewriting payment code every time you switch payment providers.**
 
-## Features
+Maestro provides a single, consistent API for all your payment needs. Whether you're using MercadoPago today and want to add Stripe tomorrow, or need to switch providers entirely - your code stays the same.
 
-- 🔌 **Unified Interface** - Same API for all payment providers
-- 🏗️ **Adapter Pattern** - Easy to extend with new providers  
-- 🛡️ **Type Safety** - Full PHP 8.3+ type declarations with DTOs
-- 🔧 **SOLID Principles** - Clean, maintainable architecture
-- 🧪 **Well Tested** - Comprehensive test coverage
-- 📋 **Laravel Integration** - Native Laravel service container support
+## Why Maestro?
 
-## Supported Providers
+**The Problem**: Every payment provider has different APIs, data formats, and integration patterns. Switching providers means rewriting all your payment logic.
 
-- ✅ **MercadoPago** - Ready to use
-- 🔄 **More coming soon** - Adyen, Stripe, PagSeguro...
+**The Solution**: Write your payment code once, use it with any provider.
+
+```php
+// This same code works with MercadoPago, Stripe, or any other provider
+$money = new Money(10000, Currency::BRL); // R$ 100.00 in cents
+$pix = new Pix(expiresAt: 60); // 1 hour expiration
+
+$payment = Maestro::createPayment(new PaymentRequest(
+    money: $money,
+    paymentMethod: $pix,
+    description: 'Product purchase',
+    customer: new Customer(/* ... */),
+));
+```
+
+## What's Included
+
+- ✅ **MercadoPago** - Full support including PIX
+- 🔄 **More providers coming** - Stripe, Adyen, PagSeguro
+- 🛡️ **Type-safe** - Full PHP 8.3+ type declarations  
+- 🧪 **Battle-tested** - Comprehensive test coverage
 
 ## Installation
-
-You can install the package via composer:
 
 ```bash
 composer require flowcoders/maestro
 ```
 
-Publish the config file:
+## Quick Setup
 
-```bash
-php artisan vendor:publish --tag="maestro-config"
-```
-
-## Configuration
-
-Add your payment provider credentials to your `.env` file. You can use the provided `.env.example` as a reference:
-
-```bash
-# Copy the example file to your Laravel app
-cp vendor/flowcoders/maestro/.env.example .env.maestro
-```
-
-### Required Environment Variables
-
+1. **Add your credentials to `.env`**:
 ```env
-# MercadoPago (environment auto-detected by token prefix)
-MERCADOPAGO_ACCESS_TOKEN=TEST-your_test_token_here  # TEST- for sandbox, APP- for production
-
-# Optional: Change default provider
-MAESTRO_PAYMENT_PROVIDER=mercadopago
+MERCADOPAGO_ACCESS_TOKEN=TEST-your_token_here
 ```
 
-> 💡 **Tip**: Check the `.env.example` file in the package for a complete list of available configuration options.
+2. **Start processing payments**:
+```php
+use Flowcoders\Maestro\Facades\Maestro;
+use Flowcoders\Maestro\ValueObjects\Money;
+use Flowcoders\Maestro\ValueObjects\PaymentMethod\Pix;
 
-## Basic Usage
+$payment = Maestro::createPayment(/* ... */);
+```
 
-### Using the Facade
+That's it! No config files, no complex setup.
+
+## Usage Examples
+
+### Create a Payment
 
 ```php
 use Flowcoders\Maestro\Facades\Maestro;
-use Flowcoders\Maestro\DTOs\PaymentDTO;
+use Flowcoders\Maestro\DTOs\PaymentRequest;
 use Flowcoders\Maestro\DTOs\Customer;
+use Flowcoders\Maestro\ValueObjects\Money;
+use Flowcoders\Maestro\ValueObjects\Email;
+use Flowcoders\Maestro\ValueObjects\PaymentMethod\Pix;
 use Flowcoders\Maestro\Enums\Currency;
 
-// Create a payment
-$payment = Maestro::createPayment(new PaymentDTO(
-    amount: 10000, // Amount in cents (R$ 100.00)
-    currency: Currency::BRL,
+// Create payment components
+$money = new Money(10000, Currency::BRL); // R$ 100.00 in cents
+$pix = new Pix(expiresAt: 60); // Expires in 1 hour
+$customer = new Customer(
+    firstName: 'John',
+    lastName: 'Doe',
+    email: new Email('customer@example.com')
+);
+
+// Create the payment
+$payment = Maestro::createPayment(new PaymentRequest(
+    money: $money,
+    paymentMethod: $pix,
     description: 'Product purchase',
-    customer: new Customer(
-        email: 'customer@example.com',
-        firstName: 'John',
-        lastName: 'Doe'
-    ),
-    paymentMethod: 'pix'
+    customer: $customer
 ));
 
+// Get payment details
 echo $payment->id; // Payment ID from provider
 echo $payment->status->value; // 'pending', 'approved', etc.
 ```
 
-### Using Dependency Injection
-
-```php
-use Flowcoders\Maestro\Contracts\PaymentServiceProviderInterface;
-
-class PaymentController extends Controller
-{
-    public function __construct(
-        private PaymentServiceProviderInterface $paymentProvider
-    ) {}
-    
-    public function store(Request $request)
-    {
-        $paymentData = new CreatePaymentDTO(
-            amount: $request->amount,
-            currency: Currency::from($request->currency),
-            description: $request->description,
-            // ... other fields
-        );
-        
-        $payment = $this->paymentProvider->createPayment($paymentData);
-        
-        return response()->json([
-            'payment_id' => $payment->id,
-            'status' => $payment->status->value,
-            'amount' => $payment->amount,
-        ]);
-    }
-}
-```
-
-### Available Operations
+### All Operations
 
 ```php
 // Create payment
-$payment = Maestro::createPayment($createPaymentDTO);
+$payment = Maestro::createPayment($paymentRequest);
 
-// Get payment details
+// Get payment status
 $payment = Maestro::getPayment('payment_id');
 
 // Cancel payment
 $payment = Maestro::cancelPayment('payment_id');
 
-// Refund payment
-$payment = Maestro::refundPayment(new RefundPaymentDTO(
+// Refund payment (full or partial)
+$refundMoney = new Money(5000, Currency::BRL); // Partial refund
+$payment = Maestro::refundPayment(new RefundRequest(
     paymentId: 'payment_id',
-    amount: 5000, // partial refund in cents (R$ 50.00)
+    money: $refundMoney, // Optional: leave null for full refund
     reason: 'Customer request'
 ));
 ```
 
-## Important Notes
+## 💰 Money Handling
 
-### 💰 Monetary Values
-
-**All monetary values in Maestro are handled as integers in cents** to avoid floating-point precision issues:
+Use the **Money value object** with amounts in cents:
 
 ```php
-// ✅ Correct - Use cents
-$payment = new CreatePaymentDTO(
-    amount: 10000, // R$ 100.00
-    currency: Currency::BRL
-);
+// ✅ Correct
+$money = new Money(10000, Currency::BRL); // R$ 100.00
 
-// ❌ Incorrect - Don't use floats
-$payment = new CreatePaymentDTO(
-    amount: 100.00, // This will cause type errors
-    currency: Currency::BRL
-);
+// ❌ Wrong  
+amount: 100.00 // This field doesn't exist
 ```
 
-### 🌐 Multi-Provider Compatibility
+Maestro automatically converts to each provider's expected format.
 
-The package automatically handles the conversion between your integer cents and each provider's expected format:
+## Need More Examples?
 
-- **Your app**: `10000` (cents)
-- **MercadoPago API**: `100.00` (decimal)
-- **Future providers**: Handled automatically by their respective mappers
+Check out [`examples/basic-usage.php`](examples/basic-usage.php) for a complete working example with all features.
 
-## Usage
+## Contributing
 
-```php
-$variable = new Flowcoders\Maestro();
-echo $variable->echoPhrase('Hello, Flowcoders!');
-```
+Contributions are welcome! Please see our [contributing guide](CONTRIBUTING.md).
 
 ## Testing
 
@@ -175,22 +143,14 @@ echo $variable->echoPhrase('Hello, Flowcoders!');
 composer test
 ```
 
-## Changelog
+## Security
 
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+For security vulnerabilities, please email the maintainer directly instead of using the issue tracker.
 
 ## Credits
 
-- [Paulo Guerra](https://github.com/pauloguerra)
+- **[Paulo Guerra](https://github.com/pauloguerra)** - Creator & maintainer
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+MIT License. See [LICENSE.md](LICENSE.md) for details.

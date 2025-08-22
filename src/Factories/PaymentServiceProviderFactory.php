@@ -14,10 +14,10 @@ use Flowcoders\Maestro\Mappers\MercadoPagoPaymentMapper;
 use Flowcoders\Maestro\Mappers\AsaasPaymentMapper;
 use Flowcoders\Maestro\Contracts\PaymentServiceProviderInterface;
 
-class PaymentServiceProviderFactory
+readonly class PaymentServiceProviderFactory
 {
     public function __construct(
-        private readonly HttpFactory $httpFactory
+        private HttpFactory $httpFactory
     ) {
     }
 

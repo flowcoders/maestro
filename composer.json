@@ -1,12 +1,17 @@
 {
     "name": "flowcoders/maestro",
-    "description": "Flowcoders Maestro",
+    "description": "Unified payment gateway for Laravel - Write once, use with any payment provider (MercadoPago, Stripe, and more)",
     "keywords": [
-        "flowcoders",
         "laravel",
-        "maestro",
         "payment",
-        "gateway"
+        "gateway",
+        "mercadopago",
+        "stripe",
+        "pix",
+        "payment-provider",
+        "unified-api",
+        "payment-gateway",
+        "asaas"
     ],
     "homepage": "https://github.com/flowcoders/maestro",
     "license": "MIT",
