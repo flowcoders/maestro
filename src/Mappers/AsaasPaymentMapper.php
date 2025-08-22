@@ -329,11 +329,6 @@ class AsaasPaymentMapper implements PaymentMapperInterface
 
     private function getCustomerId(Customer $customer): string
     {
-        if ($customer->id === null) {
-            // This should never happen now that the adapter creates customers automatically
-            throw new \InvalidArgumentException('Customer ID is required for Asaas payments.');
-        }
-
-        return $customer->id;
+        return $customer->id ?? throw new \InvalidArgumentException('Customer ID is required for Asaas payments.');
     }
 }
