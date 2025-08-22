@@ -8,6 +8,7 @@ enum PaymentMethod: string
 {
     case CREDIT_CARD = 'CREDIT_CARD';
     case PIX = 'PIX';
+    case BANK_SLIP = 'BANK_SLIP';
 
     public function isCreditCard(): bool
     {
@@ -17,5 +18,10 @@ enum PaymentMethod: string
     public function isPix(): bool
     {
         return $this === self::PIX;
+    }
+
+    public function isBankSlip(): bool
+    {
+        return $this === self::BANK_SLIP;
     }
 }

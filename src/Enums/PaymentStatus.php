@@ -15,6 +15,10 @@ enum PaymentStatus: string
     case CANCELED = 'CANCELED';
     case REFUNDED = 'REFUNDED';
     case CHARGED_BACK = 'CHARGED_BACK';
+    case OVERDUE = 'OVERDUE';
+    case REFUND_REQUESTED = 'REFUND_REQUESTED';
+    case REFUND_IN_PROGRESS = 'REFUND_IN_PROGRESS';
+    case IN_ANALYSIS = 'IN_ANALYSIS';
 
     public function isPending(): bool
     {
@@ -59,5 +63,25 @@ enum PaymentStatus: string
     public function isChargedBack(): bool
     {
         return $this === self::CHARGED_BACK;
+    }
+
+    public function isOverdue(): bool
+    {
+        return $this === self::OVERDUE;
+    }
+
+    public function isRefundRequested(): bool
+    {
+        return $this === self::REFUND_REQUESTED;
+    }
+
+    public function isRefundInProgress(): bool
+    {
+        return $this === self::REFUND_IN_PROGRESS;
+    }
+
+    public function isInAnalysis(): bool
+    {
+        return $this === self::IN_ANALYSIS;
     }
 }
