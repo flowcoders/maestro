@@ -149,7 +149,7 @@ For security vulnerabilities, please email the maintainer directly instead of us
 
 ## Credits
 
-- **[Paulo Guerra](https://github.com/pauloguerra)** - Creator & maintainer
+- **[Paulo Guerra](https://github.com/pvguerra)** - Creator & maintainer
 
 ## License
 
