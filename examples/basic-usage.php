@@ -6,49 +6,35 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Flowcoders\Maestro\DTOs\Customer;
 use Flowcoders\Maestro\DTOs\PaymentRequest;
-use Flowcoders\Maestro\Enums\CountryCode;
 use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\DocumentType;
 use Flowcoders\Maestro\Facades\Maestro;
-use Flowcoders\Maestro\ValueObjects\Address;
-use Flowcoders\Maestro\ValueObjects\Document;
-use Flowcoders\Maestro\ValueObjects\Email;
-use Flowcoders\Maestro\ValueObjects\Money;
 use Flowcoders\Maestro\ValueObjects\PaymentMethod\Pix;
-use Flowcoders\Maestro\ValueObjects\Phone;
 
-// Example of basic payment creation
 function createBasicPayment(): void
 {
-    $email = new Email('customer@example.com');
-    $document = new Document(DocumentType::CPF, '78021222018');
-    $phone = new Phone('+5511999999999');
-    $address = new Address(
-        postalCode: '01234-567',
-        streetLine1: 'Rua das Flores',
-        city: 'São Paulo',
-        stateOrProvince: 'SP',
-        countryCode: CountryCode::BR,
-        streetLine2: '123',
-        neighborhood: 'Centro'
-    );
-
+    // Create customer using simplified API (no Value Objects needed)
     $customer = new Customer(
         firstName: 'João',
         lastName: 'Silva',
-        email: $email,
-        document: $document,
-        phone: $phone,
-        address: $address
+        email: 'customer@example.com',
+        documentType: DocumentType::CPF,
+        documentValue: '78021222018',
+        phoneNumber: '5511999999999',
+        postalCode: '01234567',
+        streetLine1: 'Rua das Flores',
+        streetLine2: '123',
+        city: 'São Paulo',
+        stateOrProvince: 'SP',
+        countryCode: 'BR',
+        neighborhood: 'Centro'
     );
 
-    // Create a PIX payment method that expires in 1 hour
-    $pix = new Pix(expiresAt: 60);
-
-    $money = new Money(10000, Currency::BRL);
+    $pix = new Pix(expiresAt: (new DateTime('+1 hour'))->format('c'));
 
     $paymentRequest = new PaymentRequest(
-        money: $money,
+        amount: 10000,
+        currency: Currency::BRL,
         paymentMethod: $pix,
         description: 'Compra de produto no e-commerce',
         customer: $customer,

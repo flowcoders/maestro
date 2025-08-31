@@ -7,7 +7,6 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Flowcoders\Maestro\Adapters\MercadoPagoAdapter;
 use Flowcoders\Maestro\DTOs\Customer;
 use Flowcoders\Maestro\DTOs\PaymentRequest;
-use Flowcoders\Maestro\Enums\CountryCode;
 use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\DocumentType;
 use Flowcoders\Maestro\Http\BaseHttpClient;
@@ -101,8 +100,8 @@ function createBasicPaymentStandalone(): void
         neighborhood: 'Centro'
     );
 
-    // Create a PIX payment method that expires in 1 hour
-    $pix = new Pix(expiresAt: 60);
+    // Create a PIX payment method that expires in 1 hour (ISO 8601 format)
+    $pix = new Pix(expiresAt: (new DateTime('+1 hour'))->format('c'));
 
     $paymentRequest = new PaymentRequest(
         amount: 25000,

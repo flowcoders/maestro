@@ -32,19 +32,24 @@ readonly class Customer
         ?string $neighborhood = null,
     ) {
         // Create Document VO internally if data is provided
-        $this->document = ($documentType !== null && $documentValue !== null) 
-            ? new Document($documentType, $documentValue) 
+        $this->document = ($documentType !== null && $documentValue !== null)
+            ? new Document($documentType, $documentValue)
             : null;
 
         // Create Phone VO internally if phone number is provided
-        $this->phone = $phoneNumber !== null 
-            ? new Phone($phoneNumber) 
+        $this->phone = $phoneNumber !== null
+            ? new Phone($phoneNumber)
             : null;
 
         // Create Address VO internally if address data is provided
         $this->address = $this->createAddressIfNeeded(
-            $postalCode, $streetLine1, $streetLine2, $city, 
-            $stateOrProvince, $countryCode, $neighborhood
+            $postalCode,
+            $streetLine1,
+            $streetLine2,
+            $city,
+            $stateOrProvince,
+            $countryCode,
+            $neighborhood
         );
     }
 

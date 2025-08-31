@@ -51,7 +51,7 @@ The package automatically adds proper formatting when communicating with payment
 
 ```php
 // This same code works with MercadoPago, Stripe, or any other provider
-$pix = new Pix(expiresAt: 60); // 1 hour expiration
+$pix = new Pix(expiresAt: (new DateTime('+1 hour'))->format('c')); // 1 hour expiration
 
 $payment = Maestro::createPayment(new PaymentRequest(
     amount: 10000,                    // R$ 100.00 in cents

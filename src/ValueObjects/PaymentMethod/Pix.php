@@ -12,7 +12,7 @@ use InvalidArgumentException;
 readonly class Pix implements PaymentMethodInterface
 {
     public function __construct(
-        public int $expiresAt = 60,
+        public ?string $expiresAt = null,
         public ?string $qrCode = null,
         public ?string $qrCodeBase64 = null,
         public ?string $qrCodeUrl = null,
@@ -24,12 +24,26 @@ readonly class Pix implements PaymentMethodInterface
 
     public function getExpiresAt(): CarbonImmutable
     {
-        return CarbonImmutable::now()->addMinutes($this->expiresAt);
+        if ($this->expiresAt === null) {
+            // Default to 1 hour from now if not specified
+            return CarbonImmutable::now()->addHour();
+        }
+
+        return CarbonImmutable::parse($this->expiresAt);
     }
 
     private function validateExpiresAt(): void
     {
-        $expiresDate = $this->getExpiresAt();
+        if ($this->expiresAt === null) {
+            return; // Valid - will use default 1 hour
+        }
+
+        try {
+            $expiresDate = CarbonImmutable::parse($this->expiresAt);
+        } catch (\Exception $e) {
+            throw new InvalidArgumentException("Invalid expiresAt format. Use ISO 8601 format (e.g., '2024-12-31T23:59:59Z' or '2024-12-31T23:59:59-03:00')");
+        }
+
         $now = CarbonImmutable::now();
 
         if ($expiresDate <= $now) {

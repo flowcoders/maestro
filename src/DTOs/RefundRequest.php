@@ -19,8 +19,8 @@ readonly class RefundRequest
         public ?array $metadata = null,
         public ?string $idempotencyKey = null,
     ) {
-        $this->money = ($amount !== null && $currency !== null) 
-            ? new Money($amount, $currency) 
+        $this->money = ($amount !== null && $currency !== null)
+            ? new Money($amount, $currency)
             : null;
     }
 }

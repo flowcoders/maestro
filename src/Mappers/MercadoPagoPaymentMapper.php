@@ -261,7 +261,7 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
         }
 
         if ($paymentTypeId === 'bank_transfer' && $response['payment_method_id'] === 'pix') {
-            $expiresAt = $this->calculatePixExpirationInMinutes($response['date_of_expiration'] ?? null);
+            $expiresAt = $response['date_of_expiration'] ?? null;
             $qrCode = data_get($response, 'point_of_interaction.transaction_data.qr_code');
             $qrCodeBase64 = data_get($response, 'point_of_interaction.transaction_data.qr_code_base64');
             $qrCodeUrl = data_get($response, 'point_of_interaction.transaction_data.ticket_url');
@@ -288,24 +288,6 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
         }
 
         return null;
-    }
-
-    private function calculatePixExpirationInMinutes(?string $dateOfExpiration): int
-    {
-        if ($dateOfExpiration === null) {
-            throw new \InvalidArgumentException('Date of expiration is required for PIX payment method');
-        }
-
-        try {
-            $expirationDate = CarbonImmutable::parse($dateOfExpiration);
-            $now = CarbonImmutable::now();
-
-            $minutesUntilExpiration = $now->diffInMinutes($expirationDate);
-
-            return (int) $minutesUntilExpiration;
-        } catch (\Exception $e) {
-            throw new \InvalidArgumentException("Invalid date format for PIX expiration: {$dateOfExpiration}");
-        }
     }
 
     private function mapBrandFromResponse(string $paymentMethodId): ?CardBrand

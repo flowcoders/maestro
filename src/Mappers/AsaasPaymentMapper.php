@@ -19,7 +19,6 @@ use Flowcoders\Maestro\DTOs\RefundRequest;
 use Flowcoders\Maestro\Enums\CardBrand;
 use Flowcoders\Maestro\Enums\RefundStatus;
 use Flowcoders\Maestro\ValueObjects\Document;
-use Flowcoders\Maestro\ValueObjects\Email;
 use Flowcoders\Maestro\ValueObjects\Money;
 use Flowcoders\Maestro\ValueObjects\PaymentMethod\CreditCard;
 use Flowcoders\Maestro\ValueObjects\PaymentMethod\Pix;
@@ -184,7 +183,7 @@ class AsaasPaymentMapper implements PaymentMapperInterface
     {
         $data = [
             'name' => trim(($customer->firstName ?? '') . ' ' . ($customer->lastName ?? '')),
-            'email' => $customer->email->value,
+            'email' => $customer->email,
             'cpfCnpj' => $customer->document->value,
             'phone' => $customer->phone !== null ? $customer->phone->number : '',
             'mobilePhone' => $customer->phone !== null ? $customer->phone->number : '',
@@ -253,7 +252,7 @@ class AsaasPaymentMapper implements PaymentMapperInterface
             }
 
             return new Pix(
-                expiresAt: 1440,
+                expiresAt: $response['dueDate'] ?? null,
                 qrCode: $qrCode,
                 qrCodeBase64: $qrCodeBase64,
                 qrCodeUrl: null

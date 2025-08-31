@@ -23,12 +23,12 @@ readonly class Phone
     {
         // Remove any existing formatting
         $cleaned = preg_replace('/[^0-9]/', '', $inputNumber);
-        
+
         // Add + prefix if not present
         if (!str_starts_with($inputNumber, '+')) {
             return '+' . $cleaned;
         }
-        
+
         return '+' . $cleaned;
     }
 
