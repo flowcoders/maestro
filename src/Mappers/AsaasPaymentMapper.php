@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\Mappers;
 
-use Carbon\CarbonImmutable;
+use Carbon\Carbon;
 use Flowcoders\Maestro\Contracts\PaymentMapperInterface;
 use Flowcoders\Maestro\DTOs\RefundResponse;
 use Flowcoders\Maestro\Enums\Currency;
@@ -31,7 +31,7 @@ class AsaasPaymentMapper implements PaymentMapperInterface
         $data = [
             'customer' => $this->getCustomerId($paymentRequest->customer),
             'value' => $paymentRequest->money->amount / 100,
-            'dueDate' => CarbonImmutable::now()->addDays(3)->format('Y-m-d'),
+            'dueDate' => Carbon::now()->addDays(3)->format('Y-m-d'),
             'description' => $paymentRequest->description,
             'externalReference' => $paymentRequest->externalReference,
         ];
@@ -115,10 +115,10 @@ class AsaasPaymentMapper implements PaymentMapperInterface
             error: $response['errors'][0]['description'] ?? null,
             errorCode: $response['errors'][0]['code'] ?? null,
             createdAt: isset($response['dateCreated'])
-                ? new CarbonImmutable($response['dateCreated'])
+                ? new Carbon($response['dateCreated'])
                 : null,
             updatedAt: isset($response['lastUpdated'])
-                ? new CarbonImmutable($response['lastUpdated'])
+                ? new Carbon($response['lastUpdated'])
                 : null,
         );
     }
@@ -136,7 +136,7 @@ class AsaasPaymentMapper implements PaymentMapperInterface
             error: $response['errors'][0]['description'] ?? null,
             errorCode: $response['errors'][0]['code'] ?? null,
             createdAt: isset($response['dateCreated'])
-                ? new CarbonImmutable($response['dateCreated'])
+                ? new Carbon($response['dateCreated'])
                 : null,
         );
     }

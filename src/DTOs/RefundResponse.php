@@ -2,7 +2,7 @@
 
 namespace Flowcoders\Maestro\DTOs;
 
-use Carbon\CarbonImmutable;
+use Carbon\Carbon;
 use Flowcoders\Maestro\Enums\RefundStatus;
 
 readonly class RefundResponse
@@ -17,7 +17,7 @@ readonly class RefundResponse
         public ?array $pspResponse = null,
         public ?string $error = null,
         public ?string $errorCode = null,
-        public ?CarbonImmutable $createdAt = null,
+        public ?Carbon $createdAt = null,
     ) {
     }
 }

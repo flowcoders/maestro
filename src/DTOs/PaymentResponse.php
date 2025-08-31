@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\DTOs;
 
-use Carbon\CarbonImmutable;
+use Carbon\Carbon;
 use Flowcoders\Maestro\Contracts\PaymentMethodInterface;
 use Flowcoders\Maestro\Enums\PaymentStatus;
 use Flowcoders\Maestro\ValueObjects\Money;
@@ -27,8 +27,8 @@ readonly class PaymentResponse
         public ?array $pspResponse = null,
         public ?string $error = null,
         public ?string $errorCode = null,
-        public ?CarbonImmutable $createdAt = null,
-        public ?CarbonImmutable $updatedAt = null,
+        public ?Carbon $createdAt = null,
+        public ?Carbon $updatedAt = null,
     ) {
     }
 

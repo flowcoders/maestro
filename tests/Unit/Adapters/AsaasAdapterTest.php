@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Carbon\CarbonImmutable;
+use Carbon\Carbon;
 use Flowcoders\Maestro\Adapters\AsaasAdapter;
 use Flowcoders\Maestro\Contracts\HttpClientInterface;
 use Flowcoders\Maestro\DTOs\Customer;
@@ -27,11 +27,11 @@ beforeEach(function () {
     $this->mapper = new AsaasPaymentMapper();
     $this->adapter = new AsaasAdapter($this->httpClient, $this->mapper);
 
-    CarbonImmutable::setTestNow('2024-01-15 10:00:00');
+    Carbon::setTestNow('2024-01-15 10:00:00');
 });
 
 afterEach(function () {
-    CarbonImmutable::setTestNow();
+    Carbon::setTestNow();
     Mockery::close();
 });
 

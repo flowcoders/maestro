@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\Mappers;
 
-use Carbon\CarbonImmutable;
+use Carbon\Carbon;
 use Flowcoders\Maestro\Contracts\PaymentMapperInterface;
 use Flowcoders\Maestro\DTOs\RefundResponse;
 use Flowcoders\Maestro\Enums\Currency;
@@ -103,10 +103,10 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
                 ? $response['status_detail']
                 : null,
             createdAt: isset($response['date_created'])
-                ? new CarbonImmutable($response['date_created'])
+                ? new Carbon($response['date_created'])
                 : null,
             updatedAt: isset($response['date_last_updated'])
-                ? new CarbonImmutable($response['date_last_updated'])
+                ? new Carbon($response['date_last_updated'])
                 : null,
         );
     }
@@ -128,7 +128,7 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
                 ? $response['status_detail']
                 : null,
             createdAt: isset($response['date_created'])
-                ? new CarbonImmutable($response['date_created'])
+                ? new Carbon($response['date_created'])
                 : null,
         );
     }

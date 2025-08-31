@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Flowcoders\Maestro\ValueObjects\PaymentMethod;
 
-use Carbon\CarbonImmutable;
+use Carbon\Carbon;
 use Flowcoders\Maestro\Contracts\PaymentMethodInterface;
 use Flowcoders\Maestro\Enums\PaymentMethod;
 use InvalidArgumentException;
@@ -22,14 +22,14 @@ readonly class Pix implements PaymentMethodInterface
         $this->validateExpiresAt();
     }
 
-    public function getExpiresAt(): CarbonImmutable
+    public function getExpiresAt(): Carbon
     {
         if ($this->expiresAt === null) {
             // Default to 1 hour from now if not specified
-            return CarbonImmutable::now()->addHour();
+            return Carbon::now()->addHour();
         }
 
-        return CarbonImmutable::parse($this->expiresAt);
+        return Carbon::parse($this->expiresAt);
     }
 
     private function validateExpiresAt(): void
@@ -39,12 +39,12 @@ readonly class Pix implements PaymentMethodInterface
         }
 
         try {
-            $expiresDate = CarbonImmutable::parse($this->expiresAt);
+            $expiresDate = Carbon::parse($this->expiresAt);
         } catch (\Exception $e) {
             throw new InvalidArgumentException("Invalid expiresAt format. Use ISO 8601 format (e.g., '2024-12-31T23:59:59Z' or '2024-12-31T23:59:59-03:00')");
         }
 
-        $now = CarbonImmutable::now($expiresDate->getTimezone());
+        $now = Carbon::now($expiresDate->getTimezone());
 
         if ($expiresDate <= $now) {
             throw new InvalidArgumentException('PIX expiration date must be in the future');
@@ -69,7 +69,7 @@ readonly class Pix implements PaymentMethodInterface
 
     public function isExpired(): bool
     {
-        return $this->getExpiresAt() <= CarbonImmutable::now();
+        return $this->getExpiresAt() <= Carbon::now();
     }
 
     public function getExpirationTimestamp(): int
