@@ -44,7 +44,7 @@ readonly class Pix implements PaymentMethodInterface
             throw new InvalidArgumentException("Invalid expiresAt format. Use ISO 8601 format (e.g., '2024-12-31T23:59:59Z' or '2024-12-31T23:59:59-03:00')");
         }
 
-        $now = CarbonImmutable::now();
+        $now = CarbonImmutable::now($expiresDate->getTimezone());
 
         if ($expiresDate <= $now) {
             throw new InvalidArgumentException('PIX expiration date must be in the future');
