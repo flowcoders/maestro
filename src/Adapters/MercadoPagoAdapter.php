@@ -39,7 +39,19 @@ readonly class MercadoPagoAdapter implements PaymentServiceProviderInterface
                 );
             }
 
-            return $this->mapper->mapPaymentResponse($response->data);
+            $paymentData = $response->data;
+
+            // Check if payer identification data is missing and fetch customer details if needed
+            if (isset($paymentData['payer']['id']) &&
+                (empty($paymentData['payer']['identification']['type']) || empty($paymentData['payer']['identification']['number']))) {
+
+                $customerData = $this->getCustomer($paymentData['payer']['id']);
+                if ($customerData !== null) {
+                    $paymentData['payer'] = array_merge($paymentData['payer'], $customerData);
+                }
+            }
+
+            return $this->mapper->mapPaymentResponse($paymentData);
         } catch (PaymentException $exception) {
             throw $exception;
         } catch (\Throwable $exception) {
@@ -63,7 +75,19 @@ readonly class MercadoPagoAdapter implements PaymentServiceProviderInterface
                 );
             }
 
-            return $this->mapper->mapPaymentResponse($response->data);
+            $paymentData = $response->data;
+
+            // Check if payer identification data is missing and fetch customer details if needed
+            if (isset($paymentData['payer']['id']) &&
+                (empty($paymentData['payer']['identification']['type']) || empty($paymentData['payer']['identification']['number']))) {
+
+                $customerData = $this->getCustomer($paymentData['payer']['id']);
+                if ($customerData !== null) {
+                    $paymentData['payer'] = array_merge($paymentData['payer'], $customerData);
+                }
+            }
+
+            return $this->mapper->mapPaymentResponse($paymentData);
         } catch (PaymentException $exception) {
             throw $exception;
         } catch (\Throwable $exception) {
@@ -72,6 +96,23 @@ readonly class MercadoPagoAdapter implements PaymentServiceProviderInterface
                 0,
                 $exception
             );
+        }
+    }
+
+    public function getCustomer(string $customerId): ?array
+    {
+        try {
+            $response = $this->httpClient->get("/v1/customers/{$customerId}");
+
+            if (!$response->isSuccessful()) {
+                // If customer not found or other error, return null to fallback gracefully
+                return null;
+            }
+
+            return $response->data;
+        } catch (\Throwable $exception) {
+            // Log error but don't fail the main payment operation
+            return null;
         }
     }
 

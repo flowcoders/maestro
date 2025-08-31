@@ -293,14 +293,24 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
 
     private function mapCustomerFromResponse(array $customer): Customer
     {
-        $document = new Document(
-            type: DocumentType::from($customer['identification']['type']),
-            value: $customer['identification']['number'],
-        );
+        $document = null;
+
+        // Check if identification data is available and valid
+        if (!empty($customer['identification']['type']) && !empty($customer['identification']['number'])) {
+            try {
+                $document = new Document(
+                    type: DocumentType::from($customer['identification']['type']),
+                    value: $customer['identification']['number'],
+                );
+            } catch (\ValueError $e) {
+                // If document type is invalid, set document to null
+                $document = null;
+            }
+        }
 
         return new Customer(
-            id: $customer['id'],
-            email: $customer['email'],
+            id: $customer['id'] ?? null,
+            email: $customer['email'] ?? null,
             document: $document,
         );
     }
