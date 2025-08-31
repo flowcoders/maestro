@@ -41,6 +41,46 @@ $payment = Maestro::createPayment(new PaymentRequest(
 composer require flowcoders/maestro
 ```
 
+## Configuration
+
+### Publishing the Config File
+
+To customize Maestro's behavior, publish the configuration file:
+
+```bash
+php artisan vendor:publish --tag="maestro-config"
+```
+
+This creates `config/maestro.php` where you can configure:
+
+- **Default payment provider** - Set which provider to use by default
+- **Provider credentials** - Configure access tokens and settings for each provider  
+- **HTTP settings** - Timeout, retry attempts, and retry delays
+
+**Example config customization:**
+
+```php
+// config/maestro.php
+return [
+    'default' => 'mercadopago', // or 'asaas'
+    
+    'providers' => [
+        'mercadopago' => [
+            'access_token' => env('MERCADOPAGO_ACCESS_TOKEN'),
+        ],
+        'asaas' => [
+            'base_url' => env('ASAAS_BASE_URL', 'https://api-sandbox.asaas.com/v3'),
+            'access_token' => env('ASAAS_ACCESS_TOKEN'),
+        ],
+    ],
+    
+    'http' => [
+        'timeout' => 30,
+        'retry_attempts' => 3,
+    ],
+];
+```
+
 ## Quick Setup
 
 1. **Add your credentials to `.env`**:
