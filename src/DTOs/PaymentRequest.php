@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace Flowcoders\Maestro\DTOs;
 
 use Flowcoders\Maestro\Contracts\PaymentMethodInterface;
+use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\ValueObjects\Money;
 use InvalidArgumentException;
 
 readonly class PaymentRequest
 {
+    public Money $money;
+
     public function __construct(
-        public Money $money,
+        public int $amount,
+        public Currency $currency,
         public PaymentMethodInterface $paymentMethod,
         public string $description,
         public Customer $customer,
@@ -25,6 +29,7 @@ readonly class PaymentRequest
         public ?array $metadata = null,
         public ?string $idempotencyKey = null,
     ) {
+        $this->money = new Money($amount, $currency);
         $this->validateInstallments($installments);
     }
 

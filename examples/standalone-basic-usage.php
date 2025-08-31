@@ -12,12 +12,7 @@ use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\DocumentType;
 use Flowcoders\Maestro\Http\BaseHttpClient;
 use Flowcoders\Maestro\Mappers\MercadoPagoPaymentMapper;
-use Flowcoders\Maestro\ValueObjects\Address;
-use Flowcoders\Maestro\ValueObjects\Document;
-use Flowcoders\Maestro\ValueObjects\Email;
-use Flowcoders\Maestro\ValueObjects\Money;
 use Flowcoders\Maestro\ValueObjects\PaymentMethod\Pix;
-use Flowcoders\Maestro\ValueObjects\Phone;
 use Illuminate\Http\Client\Factory as HttpFactory;
 
 // Simple .env file loader
@@ -88,35 +83,30 @@ function createBasicPaymentStandalone(): void
         mapper: $mapper
     );
 
-    // Create customer data
-    $email = new Email('joaosilvatest@gmail.com');
-    $document = new Document(DocumentType::CPF, '98488647093');
-    $phone = new Phone('+5511999999999');
-    $address = new Address(
-        postalCode: '01234-567',
-        streetLine1: 'Rua das Flores',
-        city: 'São Paulo',
-        stateOrProvince: 'SP',
-        countryCode: CountryCode::BR,
-        streetLine2: '123',
-        neighborhood: 'Centro'
-    );
-
+    // Create customer data with simplified API (unformatted values)
     $customer = new Customer(
         id: '2626419973-6nXIjAhpZPtuhn',
         firstName: 'João',
         lastName: 'Silva',
-        email: $email,
-        document: $document,
+        email: 'joaosilvatest@gmail.com',
+        documentType: DocumentType::CPF,
+        documentValue: '98488647093',
+        phoneNumber: '5511999999999',
+        postalCode: '01234567',
+        streetLine1: 'Rua das Flores',
+        streetLine2: '123',
+        city: 'São Paulo',
+        stateOrProvince: 'SP',
+        countryCode: 'BR',
+        neighborhood: 'Centro'
     );
 
     // Create a PIX payment method that expires in 1 hour
     $pix = new Pix(expiresAt: 60);
 
-    $money = new Money(25000, Currency::BRL);
-
     $paymentRequest = new PaymentRequest(
-        money: $money,
+        amount: 25000,
+        currency: Currency::BRL,
         paymentMethod: $pix,
         description: 'Compra de produto no e-commerce',
         customer: $customer,

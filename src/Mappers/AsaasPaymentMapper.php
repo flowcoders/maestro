@@ -314,16 +314,14 @@ class AsaasPaymentMapper implements PaymentMapperInterface
             );
         }
 
-        $email = null;
-        if (isset($response['email']) && !empty($response['email'])) {
-            $email = new Email($response['email']);
-        }
+        $email = $response['email'] ?? null;
 
         return new Customer(
             id: $response['customer'] ?? $response['id'] ?? null,
             firstName: $response['name'] ?? null,
             email: $email,
-            document: $document,
+            documentType: $document?->type,
+            documentValue: $document?->value,
         );
     }
 

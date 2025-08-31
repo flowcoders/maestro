@@ -9,6 +9,40 @@
 
 Maestro provides a single, consistent API for all your payment needs. Whether you're using MercadoPago today and want to add Stripe tomorrow, or need to switch providers entirely - your code stays the same.
 
+## 🎯 Simple API Design
+
+**No Value Objects required!** Work with simple values while Maestro handles validation and formatting internally.
+
+```php
+$customer = new Customer(
+    email: 'user@example.com',
+    documentType: DocumentType::CPF,
+    documentValue: '12345678901',
+    phoneNumber: '5511999999999',  // No + or formatting needed!
+    postalCode: '01234567',        // No dashes needed!
+    city: 'São Paulo',
+    // ...
+);
+
+$payment = new PaymentRequest(
+    amount: 25000,                 // Amount in cents
+    currency: Currency::BRL,
+    customer: $customer,
+    // ...
+);
+```
+
+### Data Format Policy
+
+**Provide clean, unformatted data** - Maestro handles formatting internally:
+
+- **Phone numbers**: `5511999999999` (no + or parentheses)
+- **Postal codes**: `01234567` (no dashes or spaces)  
+- **Documents**: `12345678901` (numbers only)
+- **Emails**: `user@example.com` (simple string)
+
+The package automatically adds proper formatting when communicating with payment providers.
+
 ## Why Maestro?
 
 **The Problem**: Every payment provider has different APIs, data formats, and integration patterns. Switching providers means rewriting all your payment logic.
@@ -17,14 +51,18 @@ Maestro provides a single, consistent API for all your payment needs. Whether yo
 
 ```php
 // This same code works with MercadoPago, Stripe, or any other provider
-$money = new Money(10000, Currency::BRL); // R$ 100.00 in cents
 $pix = new Pix(expiresAt: 60); // 1 hour expiration
 
 $payment = Maestro::createPayment(new PaymentRequest(
-    money: $money,
+    amount: 10000,                    // R$ 100.00 in cents
+    currency: Currency::BRL,
     paymentMethod: $pix,
     description: 'Product purchase',
-    customer: new Customer(/* ... */),
+    customer: new Customer(
+        email: 'user@example.com',
+        documentType: DocumentType::CPF,
+        documentValue: '12345678901'
+    ),
 ));
 ```
 
@@ -107,23 +145,27 @@ That's it! No config files, no complex setup.
 use Flowcoders\Maestro\Facades\Maestro;
 use Flowcoders\Maestro\DTOs\PaymentRequest;
 use Flowcoders\Maestro\DTOs\Customer;
-use Flowcoders\Maestro\ValueObjects\Money;
-use Flowcoders\Maestro\ValueObjects\Email;
 use Flowcoders\Maestro\ValueObjects\PaymentMethod\Pix;
 use Flowcoders\Maestro\Enums\Currency;
+use Flowcoders\Maestro\Enums\DocumentType;
 
-// Create payment components
-$money = new Money(10000, Currency::BRL); // R$ 100.00 in cents
+// Create payment with simplified API (no Value Objects needed!)
 $pix = new Pix(expiresAt: 60); // Expires in 1 hour
 $customer = new Customer(
     firstName: 'John',
     lastName: 'Doe',
-    email: new Email('customer@example.com')
+    email: 'customer@example.com',              // Simple string
+    documentType: DocumentType::CPF,
+    documentValue: '12345678901',               // Unformatted
+    phoneNumber: '5511999999999',               // No + needed
+    postalCode: '01234567',                     // No dashes needed
+    city: 'São Paulo'
 );
 
 // Create the payment
 $payment = Maestro::createPayment(new PaymentRequest(
-    money: $money,
+    amount: 10000,                              // R$ 100.00 in cents
+    currency: Currency::BRL,
     paymentMethod: $pix,
     description: 'Product purchase',
     customer: $customer

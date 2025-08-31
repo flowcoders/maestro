@@ -182,7 +182,7 @@ readonly class MercadoPagoAdapter implements PaymentServiceProviderInterface
             $paymentRequest->externalReference ?? '',
             $paymentRequest->money->amount,
             $paymentRequest->money->currency->value,
-            $paymentRequest->customer->email->value ?? '',
+            $paymentRequest->customer->email ?? '',
             $paymentRequest->description,
         ];
 

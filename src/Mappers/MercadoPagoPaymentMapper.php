@@ -96,7 +96,9 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
             notificationUrl: $response['notification_url'] ?? null,
             metadata: $response['metadata'] ?? null,
             pspResponse: $response,
-            error: $response['status_detail'] ?? null,
+            error: isset($response['status']) && $response['status'] === 'rejected'
+                ? $response['status_detail']
+                : null,
             errorCode: isset($response['status']) && $response['status'] === 'rejected'
                 ? $response['status_detail']
                 : null,
@@ -119,7 +121,9 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
             reason: $response['reason'] ?? null,
             metadata: $response['metadata'] ?? null,
             pspResponse: $response,
-            error: $response['status_detail'] ?? null,
+            error: isset($response['status']) && $response['status'] === 'rejected'
+                ? $response['status_detail']
+                : null,
             errorCode: isset($response['status']) && $response['status'] === 'rejected'
                 ? $response['status_detail']
                 : null,
@@ -133,7 +137,7 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
     {
         $data = [
             'type' => 'customer',
-            'email' => $customer->email->value,
+            'email' => $customer->email,
             'first_name' => $customer->firstName,
             'last_name' => $customer->lastName,
             'identification' => [
@@ -147,7 +151,7 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
         }
 
         if ($customer->phone !== null) {
-            $data['phone'] = $customer->phone->number;
+            $data['phone'] = $this->mapPhone($customer->phone->number);
         }
 
         if ($customer->address !== null) {
@@ -155,6 +159,31 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
         }
 
         return array_filter($data, fn ($value) => $value !== null);
+    }
+
+    private function mapPhone(string $phoneNumber): array
+    {
+        // Parse E.164 format phone number for MercadoPago
+        // Example: +5511999999999 -> area_code: 11, number: 999999999
+        if (preg_match('/^\+55(\d{2})(\d+)$/', $phoneNumber, $matches)) {
+            return [
+                'area_code' => $matches[1],
+                'number' => $matches[2],
+            ];
+        }
+
+        // Fallback for other formats - try to extract area code
+        if (preg_match('/^\+\d{1,3}(\d{2,3})(\d+)$/', $phoneNumber, $matches)) {
+            return [
+                'area_code' => $matches[1],
+                'number' => $matches[2],
+            ];
+        }
+
+        // If parsing fails, return the full number without area code
+        return [
+            'number' => str_replace('+', '', $phoneNumber),
+        ];
     }
 
     private function mapAddress(Address $address): array
@@ -311,7 +340,8 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
         return new Customer(
             id: $customer['id'] ?? null,
             email: $customer['email'] ?? null,
-            document: $document,
+            documentType: $document?->type,
+            documentValue: $document?->value,
         );
     }
 }

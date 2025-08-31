@@ -33,13 +33,14 @@ readonly class AsaasAdapter implements PaymentServiceProviderInterface
                     firstName: $paymentRequest->customer->firstName,
                     lastName: $paymentRequest->customer->lastName,
                     email: $paymentRequest->customer->email,
-                    document: $paymentRequest->customer->document,
-                    phone: $paymentRequest->customer->phone,
-                    address: $paymentRequest->customer->address,
+                    documentType: $paymentRequest->customer->document?->type,
+                    documentValue: $paymentRequest->customer->document?->value,
+                    phoneNumber: $paymentRequest->customer->phone?->number,
                 );
 
                 $paymentRequest = new \Flowcoders\Maestro\DTOs\PaymentRequest(
-                    money: $paymentRequest->money,
+                    amount: $paymentRequest->amount,
+                    currency: $paymentRequest->currency,
                     customer: $customer,
                     paymentMethod: $paymentRequest->paymentMethod,
                     description: $paymentRequest->description,
@@ -199,7 +200,7 @@ readonly class AsaasAdapter implements PaymentServiceProviderInterface
         $customerData['name'] = trim(($customer->firstName ?? '') . ' ' . ($customer->lastName ?? ''));
 
         if ($customer->email !== null) {
-            $customerData['email'] = $customer->email->value;
+            $customerData['email'] = $customer->email;
         }
 
         if ($customer->phone !== null) {
