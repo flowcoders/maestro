@@ -5,6 +5,7 @@ namespace Flowcoders\Maestro;
 use Flowcoders\Maestro\Commands\MaestroCommand;
 use Flowcoders\Maestro\Contracts\PaymentServiceProviderInterface;
 use Flowcoders\Maestro\Factories\PaymentServiceProviderFactory;
+use Flowcoders\Maestro\Utils\TimezoneHelper;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -21,6 +22,10 @@ class MaestroServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         $this->app->alias(PaymentServiceProviderInterface::class, 'maestro');
+
+        $config = $this->app['config']['maestro'];
+        $timezone = $config['timezone'] ?? config('app.timezone', date_default_timezone_get());
+        TimezoneHelper::setTimezone($timezone);
     }
 
     public function packageRegistered(): void

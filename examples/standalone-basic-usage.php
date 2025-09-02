@@ -11,6 +11,7 @@ use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\DocumentType;
 use Flowcoders\Maestro\Http\BaseHttpClient;
 use Flowcoders\Maestro\Mappers\MercadoPagoPaymentMapper;
+use Flowcoders\Maestro\Utils\TimezoneHelper;
 use Flowcoders\Maestro\ValueObjects\PaymentMethod\Pix;
 use Illuminate\Http\Client\Factory as HttpFactory;
 
@@ -48,6 +49,10 @@ function createBasicPaymentStandalone(): void
 {
     // Load .env file from the project root
     loadEnvFile(__DIR__ . '/../.env');
+
+    // Configure timezone for standalone usage (Brazil timezone)
+    // In Laravel apps, this will be automatically configured from app.timezone
+    TimezoneHelper::setTimezone('America/Sao_Paulo');
 
     // You need to set your MercadoPago access token here
     // For testing, use a TEST- token, for production use an APP- token
@@ -100,8 +105,8 @@ function createBasicPaymentStandalone(): void
         neighborhood: 'Centro'
     );
 
-    // Create a PIX payment method that expires in 1 hour (ISO 8601 format)
-    $pix = new Pix(expiresAt: (new DateTime('+1 hour'))->format('c'));
+    // Create a PIX payment method that expires in 1 hour using configured timezone
+    $pix = new Pix(expiresAt: TimezoneHelper::now()->addHour()->toISOString());
 
     $paymentRequest = new PaymentRequest(
         amount: 25000,

@@ -49,6 +49,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Timezone Settings
+    |--------------------------------------------------------------------------
+    |
+    | Configure the timezone for payment dates and expiration times.
+    | If null, will use Laravel's app timezone or system timezone for standalone usage.
+    |
+    */
+
+    'timezone' => env('MAESTRO_TIMEZONE', null),
+
+    /*
+    |--------------------------------------------------------------------------
     | HTTP Client Settings
     |--------------------------------------------------------------------------
     |
