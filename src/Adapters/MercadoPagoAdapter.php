@@ -12,6 +12,7 @@ use Flowcoders\Maestro\DTOs\RefundRequest;
 use Flowcoders\Maestro\DTOs\PaymentRequest;
 use Flowcoders\Maestro\DTOs\RefundResponse;
 use Flowcoders\Maestro\Exceptions\PaymentException;
+use Ramsey\Uuid\Uuid;
 
 readonly class MercadoPagoAdapter implements PaymentServiceProviderInterface
 {
@@ -178,15 +179,7 @@ readonly class MercadoPagoAdapter implements PaymentServiceProviderInterface
             return $paymentRequest->idempotencyKey;
         }
 
-        $data = [
-            $paymentRequest->externalReference ?? '',
-            $paymentRequest->money->amount,
-            $paymentRequest->money->currency->value,
-            $paymentRequest->customer->email ?? '',
-            $paymentRequest->description,
-        ];
-
-        return hash('sha256', implode('|', $data));
+        return Uuid::uuid4()->toString();
     }
 
     private function generateRefundIdempotencyKey(RefundRequest $refundRequest): string
@@ -195,13 +188,6 @@ readonly class MercadoPagoAdapter implements PaymentServiceProviderInterface
             return $refundRequest->idempotencyKey;
         }
 
-        $data = [
-            'refund',
-            $refundRequest->paymentId,
-            $refundRequest->amount ?? 'full',
-            $refundRequest->reason ?? '',
-        ];
-
-        return hash('sha256', implode('|', $data));
+        return Uuid::uuid4()->toString();
     }
 }
