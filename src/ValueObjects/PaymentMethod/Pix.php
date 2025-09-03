@@ -42,13 +42,27 @@ readonly class Pix implements PaymentMethodInterface
         try {
             $expiresDate = TimezoneHelper::parse($this->expiresAt);
         } catch (\Exception $e) {
-            throw new InvalidArgumentException("Invalid expiresAt format. Use ISO 8601 format (e.g., '2024-12-31T23:59:59Z' or '2024-12-31T23:59:59-03:00')");
+            throw new InvalidArgumentException("Invalid expiresAt format. Use ISO 8601 format (e.g., '2024-12-31T23:59:59Z' or '2024-12-31T23:59:59-03:00') or date format (e.g., '2024-12-31')");
         }
 
         $now = TimezoneHelper::now();
-
-        if ($expiresDate <= $now) {
-            throw new InvalidArgumentException('PIX expiration date must be in the future');
+        
+        // Check if input is date-only format (Y-m-d)
+        $isDateOnly = preg_match('/^\d{4}-\d{2}-\d{2}$/', $this->expiresAt);
+        
+        if ($isDateOnly) {
+            // For date-only format, compare only dates (valid if today or future)
+            $expiresDateOnly = $expiresDate->format('Y-m-d');
+            $nowDateOnly = $now->format('Y-m-d');
+            
+            if ($expiresDateOnly < $nowDateOnly) {
+                throw new InvalidArgumentException('PIX expiration date must be today or in the future');
+            }
+        } else {
+            // For full datetime format, use precise timestamp comparison
+            if ($expiresDate <= $now) {
+                throw new InvalidArgumentException('PIX expiration date must be in the future');
+            }
         }
 
         // PIX payments typically expire within 24 hours
