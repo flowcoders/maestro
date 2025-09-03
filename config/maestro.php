@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('MAESTRO_PAYMENT_PROVIDER', 'mercadopago'),
+    'default' => env('MAESTRO_PAYMENT_PROVIDER', 'asaas'),
 
     /*
     |--------------------------------------------------------------------------

@@ -28,7 +28,7 @@ readonly class AsaasAdapter implements PaymentServiceProviderInterface
             if ($paymentRequest->customer->id === null) {
                 $customerId = $this->firstOrCreateCustomer($paymentRequest->customer);
 
-                $customer = new \Flowcoders\Maestro\DTOs\Customer(
+                $customer = new Customer(
                     id: $customerId,
                     firstName: $paymentRequest->customer->firstName,
                     lastName: $paymentRequest->customer->lastName,
@@ -38,20 +38,20 @@ readonly class AsaasAdapter implements PaymentServiceProviderInterface
                     phoneNumber: $paymentRequest->customer->phone?->number,
                 );
 
-                $paymentRequest = new \Flowcoders\Maestro\DTOs\PaymentRequest(
+                $paymentRequest = new PaymentRequest(
                     amount: $paymentRequest->amount,
                     currency: $paymentRequest->currency,
-                    customer: $customer,
                     paymentMethod: $paymentRequest->paymentMethod,
                     description: $paymentRequest->description,
-                    externalReference: $paymentRequest->externalReference,
+                    customer: $customer,
                     installments: $paymentRequest->installments,
                     capture: $paymentRequest->capture,
+                    token: $paymentRequest->token,
+                    externalReference: $paymentRequest->externalReference,
                     statementDescriptor: $paymentRequest->statementDescriptor,
                     notificationUrl: $paymentRequest->notificationUrl,
                     metadata: $paymentRequest->metadata,
                     idempotencyKey: $paymentRequest->idempotencyKey,
-                    token: $paymentRequest->token,
                 );
             }
 
@@ -204,7 +204,7 @@ readonly class AsaasAdapter implements PaymentServiceProviderInterface
         }
 
         if ($customer->phone !== null) {
-            $customerData['phone'] = $customer->phone->number;
+            $customerData['mobilePhone'] = $customer->phone->number;
         }
 
         if ($customer->document !== null) {

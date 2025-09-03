@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Flowcoders\Maestro\Adapters\AsaasAdapter;
 use Flowcoders\Maestro\Adapters\MercadoPagoAdapter;
 use Flowcoders\Maestro\DTOs\Customer;
 use Flowcoders\Maestro\DTOs\PaymentRequest;
 use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\DocumentType;
 use Flowcoders\Maestro\Http\BaseHttpClient;
+use Flowcoders\Maestro\Mappers\AsaasPaymentMapper;
 use Flowcoders\Maestro\Mappers\MercadoPagoPaymentMapper;
 use Flowcoders\Maestro\Utils\TimezoneHelper;
 use Flowcoders\Maestro\ValueObjects\PaymentMethod\Pix;
@@ -44,58 +46,113 @@ function loadEnvFile(string $path): void
     }
 }
 
+// Load configuration helper
+function loadMaestroConfig(): array
+{
+    $configPath = __DIR__ . '/../config/maestro.php';
+    if (!file_exists($configPath)) {
+        throw new \Exception('Maestro config file not found at: ' . $configPath);
+    }
+
+    return include $configPath;
+}
+
 // Example of basic payment creation without Laravel facades
 function createBasicPaymentStandalone(): void
 {
     // Load .env file from the project root
     loadEnvFile(__DIR__ . '/../.env');
 
+    // Load Maestro configuration
+    $config = loadMaestroConfig();
+
+    // Get default provider from config
+    $defaultProvider = $config['default'] ?? 'asaas';
+
+    // Override with environment variable if set
+    $provider = $_ENV['MAESTRO_PAYMENT_PROVIDER'] ?? $defaultProvider;
+
+    echo "💸 Using payment provider: {$provider}\n";
+
     // Configure timezone for standalone usage (Brazil timezone)
     // In Laravel apps, this will be automatically configured from app.timezone
     TimezoneHelper::setTimezone('America/Sao_Paulo');
 
-    // You need to set your MercadoPago access token here
-    // For testing, use a TEST- token, for production use an APP- token
-    $accessToken = $_ENV['MERCADOPAGO_ACCESS_TOKEN'] ?? 'TEST-your-test-token-here';
+    // Configure provider-specific settings
+    if ($provider === 'asaas') {
+        $accessToken = $_ENV['ASAAS_ACCESS_TOKEN'] ?? 'your-asaas-token-here';
+        $baseUrl = $_ENV['ASAAS_BASE_URL'] ?? 'https://api-sandbox.asaas.com/v3';
 
-    if ($accessToken === 'TEST-your-test-token-here') {
-        echo "⚠️  Please set your MERCADOPAGO_ACCESS_TOKEN in your .env file or update the \$accessToken variable in this script.\n";
-        echo "You can get a test token from: https://www.mercadopago.com.br/developers/panel\n";
-        echo "Create a .env file in the project root with: MERCADOPAGO_ACCESS_TOKEN=your-token-here\n";
+        if ($accessToken === 'your-asaas-token-here') {
+            echo "⚠️  Please set your ASAAS_ACCESS_TOKEN in your .env file or update the \$accessToken variable in this script.\n";
+            echo "You can get a test token from: https://asaas.com/developers\n";
+            echo "Create a .env file in the project root with: ASAAS_ACCESS_TOKEN=your-token-here\n";
+            echo "For sandbox testing, also set: ASAAS_BASE_URL=https://api-sandbox.asaas.com/v3\n";
 
-        return;
+            return;
+        }
+
+        $httpClient = new BaseHttpClient(
+            httpFactory: new HttpFactory(),
+            baseUrl: $baseUrl,
+            defaultHeaders: [
+                'Content-Type' => 'application/json',
+                'User-Agent' => 'Maestro-PHP-SDK/1.0',
+                'access_token' => $accessToken, // Asaas usa access_token no cabeçalho
+            ],
+            timeout: 30
+        );
+
+        $mapper = new AsaasPaymentMapper();
+        $maestro = new AsaasAdapter(
+            httpClient: $httpClient,
+            mapper: $mapper
+        );
+
+    } elseif ($provider === 'mercadopago') {
+        $accessToken = $_ENV['MERCADOPAGO_ACCESS_TOKEN'] ?? 'TEST-your-test-token-here';
+
+        if ($accessToken === 'TEST-your-test-token-here') {
+            echo "⚠️  Please set your MERCADOPAGO_ACCESS_TOKEN in your .env file or update the \$accessToken variable in this script.\n";
+            echo "You can get a test token from: https://www.mercadopago.com.br/developers/panel\n";
+            echo "Create a .env file in the project root with: MERCADOPAGO_ACCESS_TOKEN=your-token-here\n";
+
+            return;
+        }
+
+        $httpClient = new BaseHttpClient(
+            httpFactory: new HttpFactory(),
+            baseUrl: 'https://api.mercadopago.com',
+            defaultHeaders: [
+                'Content-Type' => 'application/json',
+                'User-Agent' => 'Maestro-PHP-SDK/1.0',
+            ],
+            timeout: 30,
+            bearerToken: $accessToken
+        );
+
+        $mapper = new MercadoPagoPaymentMapper();
+        $maestro = new MercadoPagoAdapter(
+            httpClient: $httpClient,
+            mapper: $mapper
+        );
+
+    } else {
+        throw new \Exception("Unsupported payment provider: {$provider}");
     }
 
-    // Manually create all dependencies
-    $httpFactory = new HttpFactory();
-
-    $httpClient = new BaseHttpClient(
-        httpFactory: $httpFactory,
-        baseUrl: 'https://api.mercadopago.com',
-        defaultHeaders: [
-            'Content-Type' => 'application/json',
-            'User-Agent' => 'Maestro-PHP-SDK/1.0',
-        ],
-        timeout: 30,
-        bearerToken: $accessToken
-    );
-
-    $mapper = new MercadoPagoPaymentMapper();
-
-    $maestro = new MercadoPagoAdapter(
-        httpClient: $httpClient,
-        mapper: $mapper
-    );
-
     // Create customer data with simplified API (unformatted values)
+    // For Asaas, the customer ID will be auto-generated if not provided
+    $customerId = $provider === 'mercadopago' ? '2626419973-6nXIjAhpZPtuhn' : null;
+
     $customer = new Customer(
-        id: '2626419973-6nXIjAhpZPtuhn',
+        id: $customerId,
         firstName: 'João',
         lastName: 'Silva',
         email: 'joaosilvatest@gmail.com',
         documentType: DocumentType::CPF,
         documentValue: '98488647093',
-        phoneNumber: '5511999999999',
+        phoneNumber: '4799376637',
         postalCode: '01234567',
         streetLine1: 'Rua das Flores',
         streetLine2: '123',

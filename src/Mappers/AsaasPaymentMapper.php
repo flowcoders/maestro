@@ -31,7 +31,6 @@ class AsaasPaymentMapper implements PaymentMapperInterface
         $data = [
             'customer' => $this->getCustomerId($paymentRequest->customer),
             'value' => $paymentRequest->money->amount / 100,
-            'dueDate' => Carbon::now()->addDays(3)->format('Y-m-d'),
             'description' => $paymentRequest->description,
             'externalReference' => $paymentRequest->externalReference,
         ];
