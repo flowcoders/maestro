@@ -55,6 +55,8 @@ class AsaasPaymentMapper implements PaymentMapperInterface
 
         if ($paymentRequest->paymentMethod instanceof Pix) {
             $data['dueDate'] = $paymentRequest->paymentMethod->getExpiresAt()->format('Y-m-d');
+        } else {
+            $data['dueDate'] = now()->format('Y-m-d');
         }
 
         if ($paymentRequest->notificationUrl !== null) {
