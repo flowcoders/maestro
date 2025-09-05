@@ -164,18 +164,13 @@ class AsaasPaymentMapper implements PaymentMapperInterface
 
     private function mapCreditCard(CreditCard $creditCard): array
     {
-        $data = [
-            'holderName' => $creditCard->holderName,
-            'expiryMonth' => str_pad((string) $creditCard->expiryMonth, 2, '0', STR_PAD_LEFT),
-            'expiryYear' => (string) $creditCard->expiryYear,
-        ];
-
-        // These fields would normally come from a tokenization process
-        // For testing purposes, they can be empty
-        $data['number'] = '';
-        $data['ccv'] = '';
-
-        return $data;
+        return [
+             'number' => $creditCard->number,
+             'holderName' => $creditCard->holderName,
+             'expiryMonth' => str_pad((string) $creditCard->expiryMonth, 2, '0', STR_PAD_LEFT),
+             'expiryYear' => (string) $creditCard->expiryYear,
+             'cvv' => $creditCard->cvv,
+         ];
     }
 
     private function mapCreditCardHolderInfo(Customer $customer): array

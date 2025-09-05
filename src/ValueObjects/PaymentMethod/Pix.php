@@ -46,15 +46,15 @@ readonly class Pix implements PaymentMethodInterface
         }
 
         $now = TimezoneHelper::now();
-        
+
         // Check if input is date-only format (Y-m-d)
         $isDateOnly = preg_match('/^\d{4}-\d{2}-\d{2}$/', $this->expiresAt);
-        
+
         if ($isDateOnly) {
             // For date-only format, compare only dates (valid if today or future)
             $expiresDateOnly = $expiresDate->format('Y-m-d');
             $nowDateOnly = $now->format('Y-m-d');
-            
+
             if ($expiresDateOnly < $nowDateOnly) {
                 throw new InvalidArgumentException('PIX expiration date must be today or in the future');
             }
