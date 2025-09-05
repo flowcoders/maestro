@@ -171,7 +171,7 @@ class AsaasPaymentMapper implements PaymentMapperInterface
              'holderName' => $creditCard->holderName,
              'expiryMonth' => str_pad((string) $creditCard->expiryMonth, 2, '0', STR_PAD_LEFT),
              'expiryYear' => (string) $creditCard->expiryYear,
-             'cvv' => $creditCard->cvv,
+             'ccv' => $creditCard->cvv,
          ];
     }
 
