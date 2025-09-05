@@ -21,6 +21,9 @@ readonly class PaymentServiceProviderFactory
     ) {
     }
 
+    /**
+     * @throws MaestroException
+     */
     public function create(string $provider, array $credentials): PaymentServiceProviderInterface
     {
         return match ($provider) {
@@ -30,6 +33,9 @@ readonly class PaymentServiceProviderFactory
         };
     }
 
+    /**
+     * @throws MaestroException
+     */
     private function createMercadoPagoAdapter(array $credentials): MercadoPagoAdapter
     {
         $this->validateMercadoPagoCredentials($credentials);
@@ -57,6 +63,9 @@ readonly class PaymentServiceProviderFactory
         );
     }
 
+    /**
+     * @throws MaestroException
+     */
     private function createAsaasAdapter(array $credentials): AsaasAdapter
     {
         $this->validateAsaasCredentials($credentials);
@@ -76,9 +85,9 @@ readonly class PaymentServiceProviderFactory
             defaultHeaders: [
                 'Content-Type' => 'application/json',
                 'User-Agent' => 'Maestro-PHP-SDK/1.0',
+                'access_token' => $accessToken,
             ],
-            timeout: 30,
-            bearerToken: $accessToken
+            timeout: 30
         );
 
         $mapper = new AsaasPaymentMapper();
