@@ -20,6 +20,7 @@ readonly class PaymentResponse
         public ?string $externalReference = null,
         public ?PaymentMethodInterface $paymentMethod = null,
         public ?bool $capture = null,
+        public ?string $expiresAt = null,
         public ?string $statementDescriptor = null,
         public ?int $installments = null,
         public ?string $notificationUrl = null,

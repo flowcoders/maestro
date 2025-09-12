@@ -54,7 +54,8 @@ class AsaasPaymentMapper implements PaymentMapperInterface
         }
 
         if ($paymentRequest->paymentMethod instanceof Pix) {
-            $data['dueDate'] = $paymentRequest->paymentMethod->getExpiresAt()->format('Y-m-d');
+            $expiresAt = $paymentRequest->getExpiresAt();
+            $data['dueDate'] = $expiresAt ? $expiresAt->format('Y-m-d') : now()->format('Y-m-d');
         } else {
             $data['dueDate'] = now()->format('Y-m-d');
         }
@@ -108,6 +109,7 @@ class AsaasPaymentMapper implements PaymentMapperInterface
             externalReference: $response['externalReference'] ?? null,
             paymentMethod: $paymentMethod,
             capture: true,
+            expiresAt: $response['dueDate'] ?? null,
             statementDescriptor: null,
             installments: $response['installmentCount'] ?? 1,
             notificationUrl: $response['notificationUrl'] ?? null,
@@ -248,7 +250,6 @@ class AsaasPaymentMapper implements PaymentMapperInterface
             }
 
             return new Pix(
-                expiresAt: $response['dueDate'] ?? null,
                 qrCode: $qrCode,
                 qrCodeBase64: $qrCodeBase64,
                 qrCodeUrl: null

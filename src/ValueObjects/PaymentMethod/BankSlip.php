@@ -13,7 +13,6 @@ readonly class BankSlip implements PaymentMethodInterface
         public ?string $bankSlipUrl = null,
         public ?string $digitableLine = null,
         public ?string $barcode = null,
-        public ?int $daysAfterDueDateToExpire = 30,
     ) {
     }
 

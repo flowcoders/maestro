@@ -163,7 +163,7 @@ function createBasicPaymentStandalone(): void
     );
 
     // Create a PIX payment method that expires in 1 hour using configured timezone
-    $pix = new Pix(expiresAt: TimezoneHelper::now()->addHour()->toISOString());
+    $pix = new Pix();
 
     $paymentRequest = new PaymentRequest(
         amount: 25000,
@@ -173,6 +173,7 @@ function createBasicPaymentStandalone(): void
         customer: $customer,
         installments: 1,
         capture: true,
+        expiresAt: TimezoneHelper::now()->addHour()->toISOString(),
         externalReference: 'ORDER-12345',
         notificationUrl: 'https://your-app.com/webhooks/maestro',
         callbackUrl: 'https://your-app.com/payment/success',

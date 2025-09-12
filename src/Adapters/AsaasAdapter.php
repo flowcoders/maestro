@@ -46,6 +46,7 @@ readonly class AsaasAdapter implements PaymentServiceProviderInterface
                     customer: $customer,
                     installments: $paymentRequest->installments,
                     capture: $paymentRequest->capture,
+                    expiresAt: $paymentRequest->expiresAt,
                     token: $paymentRequest->token,
                     externalReference: $paymentRequest->externalReference,
                     statementDescriptor: $paymentRequest->statementDescriptor,

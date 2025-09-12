@@ -42,7 +42,7 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
         $data['payment_method_id'] = $this->mapPaymentMethod($paymentRequest->paymentMethod);
 
         if ($paymentRequest->paymentMethod instanceof Pix) {
-            $data['date_of_expiration'] = $paymentRequest->paymentMethod->getExpiresAt()->format('Y-m-d\TH:i:s.vP');
+            $data['date_of_expiration'] = $paymentRequest->getExpiresAt()->format('Y-m-d\TH:i:s.vP');
         }
 
         if ($paymentRequest->metadata !== null) {
@@ -91,6 +91,7 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
             externalReference: $response['external_reference'] ?? null,
             paymentMethod: $paymentMethod,
             capture: $response['captured'] ?? null,
+            expiresAt: $response['date_of_expiration'] ?? null,
             statementDescriptor: $response['statement_descriptor'] ?? null,
             installments: $response['installments'] ?? null,
             notificationUrl: $response['notification_url'] ?? null,
@@ -261,13 +262,11 @@ class MercadoPagoPaymentMapper implements PaymentMapperInterface
         }
 
         if ($paymentTypeId === 'bank_transfer' && $response['payment_method_id'] === 'pix') {
-            $expiresAt = $response['date_of_expiration'] ?? null;
             $qrCode = data_get($response, 'point_of_interaction.transaction_data.qr_code');
             $qrCodeBase64 = data_get($response, 'point_of_interaction.transaction_data.qr_code_base64');
             $qrCodeUrl = data_get($response, 'point_of_interaction.transaction_data.ticket_url');
 
             return new Pix(
-                expiresAt: $expiresAt,
                 qrCode: $qrCode,
                 qrCodeBase64: $qrCodeBase64,
                 qrCodeUrl: $qrCodeUrl
