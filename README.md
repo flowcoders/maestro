@@ -18,8 +18,8 @@ $customer = new Customer(
     email: 'user@example.com',
     documentType: DocumentType::CPF,
     documentValue: '12345678901',
-    phoneNumber: '5511999999999',  // No + or formatting needed!
-    postalCode: '01234567',        // No dashes needed!
+    phoneNumber: '5511999999999',
+    postalCode: '01234567',
     city: 'São Paulo',
     // ...
 );
@@ -51,7 +51,7 @@ The package automatically adds proper formatting when communicating with payment
 
 ```php
 // This same code works with MercadoPago, Stripe, or any other provider
-$pix = new Pix(expiresAt: (new DateTime('+1 hour'))->format('c')); // 1 hour expiration
+$pix = new Pix();
 
 $payment = Maestro::createPayment(new PaymentRequest(
     amount: 10000,                    // R$ 100.00 in cents
@@ -63,13 +63,15 @@ $payment = Maestro::createPayment(new PaymentRequest(
         documentType: DocumentType::CPF,
         documentValue: '12345678901'
     ),
+    expiresAt: now()->addHour()->toISOString()
 ));
 ```
 
 ## What's Included
 
-- ✅ **MercadoPago** - Full support including PIX
-- 🔄 **More providers coming** - Stripe, Adyen, PagSeguro
+- ✅ **Asaas** - Full support
+- ✅ **MercadoPago** - Full support
+- 🔄 **More providers coming** - Stripe, PayPal, ...
 - 🛡️ **Type-safe** - Full PHP 8.3+ type declarations  
 - 🧪 **Battle-tested** - Comprehensive test coverage
 
@@ -100,7 +102,7 @@ This creates `config/maestro.php` where you can configure:
 ```php
 // config/maestro.php
 return [
-    'default' => 'mercadopago', // or 'asaas'
+    'default' => 'asaas',
     
     'providers' => [
         'mercadopago' => [
@@ -123,7 +125,8 @@ return [
 
 1. **Add your credentials to `.env`**:
 ```env
-MERCADOPAGO_ACCESS_TOKEN=TEST-your_token_here
+ASAAS_BASE_URL=https://api-sandbox.asaas.com/v3
+ASAAS_ACCESS_TOKEN=TEST-your_token_here
 ```
 
 2. **Start processing payments**:
@@ -150,15 +153,15 @@ use Flowcoders\Maestro\Enums\Currency;
 use Flowcoders\Maestro\Enums\DocumentType;
 
 // Create payment with simplified API (no Value Objects needed!)
-$pix = new Pix(expiresAt: 60); // Expires in 1 hour
+$pix = new Pix();
 $customer = new Customer(
     firstName: 'John',
     lastName: 'Doe',
-    email: 'customer@example.com',              // Simple string
+    email: 'customer@example.com',              
     documentType: DocumentType::CPF,
-    documentValue: '12345678901',               // Unformatted
-    phoneNumber: '5511999999999',               // No + needed
-    postalCode: '01234567',                     // No dashes needed
+    documentValue: '12345678901',              
+    phoneNumber: '5511999999999',         
+    postalCode: '01234567',                    
     city: 'São Paulo'
 );
 
@@ -168,7 +171,8 @@ $payment = Maestro::createPayment(new PaymentRequest(
     currency: Currency::BRL,
     paymentMethod: $pix,
     description: 'Product purchase',
-    customer: $customer
+    customer: $customer,
+    expiresAt: now()->addHour()->toISOString()
 ));
 
 // Get payment details
@@ -232,6 +236,7 @@ For security vulnerabilities, please email the maintainer directly instead of us
 ## Credits
 
 - **[Paulo Guerra](https://github.com/pvguerra)** - Creator & maintainer
+- **[Edilson Fernandes](https://github.com/humble23)** - Contributor
 
 ## License
 
