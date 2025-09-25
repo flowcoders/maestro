@@ -70,10 +70,10 @@ readonly class Customer
         return new Address(
             postalCode: $postalCode,
             streetLine1: $streetLine1,
-            streetLine2: $streetLine2,
             city: $city,
             stateOrProvince: $stateOrProvince,
             countryCode: $countryCode ? \Flowcoders\Maestro\Enums\CountryCode::from($countryCode) : null,
+            streetLine2: $streetLine2,
             neighborhood: $neighborhood
         );
     }

@@ -36,6 +36,13 @@ readonly class AsaasAdapter implements PaymentServiceProviderInterface
                     documentType: $paymentRequest->customer->document?->type,
                     documentValue: $paymentRequest->customer->document?->value,
                     phoneNumber: $paymentRequest->customer->phone?->number,
+                    postalCode: $paymentRequest->customer->address?->postalCode,
+                    streetLine1: $paymentRequest->customer->address?->streetLine1,
+                    streetLine2: $paymentRequest->customer->address?->streetLine2,
+                    city: $paymentRequest->customer->address?->city,
+                    stateOrProvince: $paymentRequest->customer->address?->stateOrProvince,
+                    countryCode: $paymentRequest->customer->address?->countryCode->value ?? null,
+                    neighborhood: $paymentRequest->customer->address?->neighborhood,
                 );
 
                 $paymentRequest = new PaymentRequest(
@@ -219,9 +226,16 @@ readonly class AsaasAdapter implements PaymentServiceProviderInterface
             if ($customer->address->streetLine2 !== null) {
                 $customerData['addressNumber'] = $customer->address->streetLine2;
             }
+            $customerData['address'] = $customer->address->streetLine1;
             $customerData['city'] = $customer->address->city;
             if ($customer->address->neighborhood !== null) {
                 $customerData['province'] = $customer->address->neighborhood;
+            }
+            if ($customer->address->stateOrProvince !== null) {
+                $customerData['state'] = $customer->address->stateOrProvince;
+            }
+            if ($customer->address->complement !== null) {
+                $customerData['addressComplement'] = $customer->address->complement;
             }
         }
 

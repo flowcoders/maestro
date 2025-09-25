@@ -143,7 +143,7 @@ function createBasicPaymentStandalone(): void
 
     // Create customer data with simplified API (unformatted values)
     // For Asaas, the customer ID will be auto-generated if not provided
-    $customerId = $provider === 'mercadopago' ? '2626419973-6nXIjAhpZPtuhn' : null;
+    $customerId = $provider === 'asaas' ? 'cus_000007051915' : null;
 
     $customer = new Customer(
         id: $customerId,
@@ -153,7 +153,7 @@ function createBasicPaymentStandalone(): void
         documentType: DocumentType::CPF,
         documentValue: '98488647093',
         phoneNumber: '4799376637',
-        postalCode: '01234567',
+        postalCode: '02418060',
         streetLine1: 'Rua das Flores',
         streetLine2: '123',
         city: 'São Paulo',
@@ -164,16 +164,23 @@ function createBasicPaymentStandalone(): void
 
     // Create a PIX payment method that expires in 1 hour using configured timezone
     $pix = new Pix();
+    $creditCard = new \Flowcoders\Maestro\ValueObjects\PaymentMethod\CreditCard(
+        number: '4444444444444444',
+        holderName: 'teste teste',
+        expiryMonth: 3,
+        expiryYear: 2030,
+        cvv: '123',
+    );
 
     $paymentRequest = new PaymentRequest(
         amount: 25000,
         currency: Currency::BRL,
-        paymentMethod: $pix,
+        paymentMethod: $creditCard,
         description: 'Compra de produto no e-commerce',
         customer: $customer,
         installments: 1,
         capture: true,
-        expiresAt: TimezoneHelper::now()->addHour()->toISOString(),
+        // expiresAt: TimezoneHelper::now()->addHour()->toISOString(),
         externalReference: 'ORDER-12345',
         notificationUrl: 'https://your-app.com/webhooks/maestro',
         callbackUrl: 'https://your-app.com/payment/success',

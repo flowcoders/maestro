@@ -185,15 +185,9 @@ class AsaasPaymentMapper implements PaymentMapperInterface
             'cpfCnpj' => $customer->document->value,
             'phone' => $customer->phone !== null ? $customer->phone->number : '',
             'mobilePhone' => $customer->phone !== null ? $customer->phone->number : '',
+            'postalCode' => $customer->address->postalCode,
+            'addressNumber' => $customer->address->streetLine2,
         ];
-
-        if ($customer->address !== null) {
-            $data['postalCode'] = $customer->address->postalCode;
-            $data['address'] = $customer->address->streetLine1;
-            $data['addressNumber'] = $customer->address->streetLine2 ?? 's/n';
-            $data['complement'] = $customer->address->complement ?? '';
-            $data['province'] = $customer->address->neighborhood ?? '';
-        }
 
         return array_filter($data, fn ($value) => $value !== '');
     }
